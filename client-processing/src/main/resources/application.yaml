@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: client-processing
+
+server:
+  port: 8082

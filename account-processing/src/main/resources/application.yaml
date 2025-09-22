@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: account-processing
+
+server:
+  port: 8081

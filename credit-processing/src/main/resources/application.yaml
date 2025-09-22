@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: credit-processing
+
+server:
+  port: 8083
