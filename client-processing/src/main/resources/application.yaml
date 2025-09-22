@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/client_processing_db
+    url: jdbc:postgresql://localhost:5432/client_processing_db11
     username: postgres
     password: postgres
 
@@ -13,8 +13,8 @@ spring:
       hibernate:
         ddl-auto: validate
 
-#    liquibase:
-#      enabled: true
+    liquibase:
+      enabled: true
 
 server:
   port: 8082

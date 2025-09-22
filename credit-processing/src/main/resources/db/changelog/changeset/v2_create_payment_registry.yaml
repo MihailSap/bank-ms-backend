@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10
+      author: mihail
+      changes:
+        - createTable:
+            tableName: payment_registry
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_registry_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: NUMERIC(10,3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: interest_rate_amount
+                  type: NUMERIC(10,3)
+              - column:
+                  name: debt_amount
+                  type: NUMERIC(10,3)
+              - column:
+                  name: expired
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_expiration_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: payment_registry
+            baseColumnNames: product_registry_id
+            constraintName: fk_payment_product_registry
+            referencedTableName: product_registry
+            referencedColumnNames: id

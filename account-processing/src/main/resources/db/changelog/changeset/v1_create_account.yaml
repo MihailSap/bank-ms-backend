@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: mihail
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: NUMERIC(10,3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: interest_rate
+                  type: NUMERIC(5,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_recalc
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_exist
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: ALTER TABLE account
+              ADD CONSTRAINT chk_account_status
+              CHECK (status IN ('ACTIVE','CLOSED','BLOCKED','ARRESTED'))
