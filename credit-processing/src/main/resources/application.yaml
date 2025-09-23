@@ -2,11 +2,15 @@ spring:
   application:
     name: credit-processing
 
+  config:
+    import:
+      optional:application-secret.yaml
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/credit_processing_db
-    username: postgres
-    password: postgres
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
     jpa:
       show-sql: true
