@@ -48,7 +48,3 @@ databaseChangeLog:
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
-        - sql:
-            sql: ALTER TABLE account
-              ADD CONSTRAINT chk_account_status
-              CHECK (status IN ('ACTIVE','CLOSED','BLOCKED','ARRESTED'))

@@ -39,7 +39,3 @@ databaseChangeLog:
             constraintName: fk_card_account
             referencedTableName: account
             referencedColumnNames: id
-        - sql:
-            sql: ALTER TABLE card
-              ADD CONSTRAINT chk_card_status
-              CHECK (status IN ('ACTIVE','CLOSED','BLOCKED','ARRESTED'))

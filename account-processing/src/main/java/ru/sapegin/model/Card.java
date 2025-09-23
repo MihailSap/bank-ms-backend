@@ -1,9 +1,6 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
-import ru.sapegin.enums.StatusEnum;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "card")
@@ -21,10 +18,9 @@ public class Card {
 
     private String paymentSystem;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private String status;
 
-    public Card(Long id, Account account, Long cardId, String paymentSystem, StatusEnum status) {
+    public Card(Long id, Account account, Long cardId, String paymentSystem, String status) {
         this.id = id;
         this.account = account;
         this.cardId = cardId;
@@ -67,11 +63,11 @@ public class Card {
         this.paymentSystem = paymentSystem;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

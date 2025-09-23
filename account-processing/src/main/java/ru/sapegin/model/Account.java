@@ -1,10 +1,8 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
-import ru.sapegin.enums.StatusEnum;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 @Table(name = "account")
@@ -26,11 +24,10 @@ public class Account {
 
     private boolean cardExists;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private String status;
 
     public Account(Long id, Long clientId, Long productId, BigDecimal balance,
-                   BigDecimal interestRate, boolean isRecalc, boolean cardExists, StatusEnum status) {
+                   BigDecimal interestRate, boolean isRecalc, boolean cardExists, String status) {
         this.id = id;
         this.clientId = clientId;
         this.productId = productId;
@@ -100,11 +97,11 @@ public class Account {
         this.cardExists = cardExists;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

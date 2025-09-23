@@ -1,11 +1,9 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
-import ru.sapegin.enums.StatusEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "payment")
@@ -27,18 +25,17 @@ public class Payment {
 
     private LocalDateTime payedAt;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private String type;
 
     public Payment(Long id, Account account, LocalDateTime paymentDate, BigDecimal amount,
-                   boolean isCredit, LocalDateTime payedAt, StatusEnum status) {
+                   boolean isCredit, LocalDateTime payedAt, String type) {
         this.id = id;
         this.account = account;
         this.paymentDate = paymentDate;
         this.amount = amount;
         this.isCredit = isCredit;
         this.payedAt = payedAt;
-        this.status = status;
+        this.type = type;
     }
 
     public Payment() {
@@ -92,11 +89,11 @@ public class Payment {
         this.payedAt = payedAt;
     }
 
-    public StatusEnum getStatus() {
-        return status;
+    public String getType() {
+        return type;
     }
 
-    public void setStatus(StatusEnum status) {
-        this.status = status;
+    public void setType(String type) {
+        this.type = type;
     }
 }
