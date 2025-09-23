@@ -7,6 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ClientProcessingApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClientProcessingApplication.class, args);
-        System.out.println("Hello, Client processing!!!");
     }
 }
