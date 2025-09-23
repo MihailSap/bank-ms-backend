@@ -2,11 +2,10 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,8 +16,7 @@ public class User {
 
     private String email;
 
-    public User(Long id, String login, String password, String email) {
-        this.id = id;
+    public User(String login, String password, String email) {
         this.login = login;
         this.password = password;
         this.email = email;

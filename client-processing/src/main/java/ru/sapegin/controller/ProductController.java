@@ -1,0 +1,37 @@
+package ru.sapegin.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ru.sapegin.dto.ProductDTO;
+import ru.sapegin.service.ProductService;
+
+@RestController
+@RequestMapping("/api/product")
+public class ProductController {
+
+    private final ProductService productService;
+
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductDTO create(@RequestBody ProductDTO productDTO){
+        return productService.create(productDTO);
+    }
+
+    @PutMapping("/update/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDTO update(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO){
+        return productService.update(id, productDTO);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("id") Long id){
+        productService.delete(id);
+    }
+}

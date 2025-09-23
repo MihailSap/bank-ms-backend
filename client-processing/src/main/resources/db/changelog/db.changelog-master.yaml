@@ -7,3 +7,9 @@ databaseChangeLog:
       file: db/changelog/changeset/v3_create_product.yaml
   - include:
       file: db/changelog/changeset/v4_create_client_product.yaml
+  - include:
+      file: db/changelog/changeset/v5_create_blacklist_registry.yaml
+  - include:
+      file: db/changelog/changeset/v3.1_update_product_create_date.yaml
+  - include:
+      file: db/changelog/changeset/v3.2_update_product.yaml

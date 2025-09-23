@@ -1,10 +1,10 @@
 package ru.sapegin.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import ru.sapegin.enums.DocumentTypeEnum;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "client")
@@ -26,7 +26,8 @@ public class Client {
 
     private String lastName;
 
-    private LocalDateTime dateOfBirth;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     private DocumentTypeEnum documentType;
@@ -37,10 +38,9 @@ public class Client {
 
     private String documentSuffix;
 
-    public Client(Long id, String clientId, User user, String firstName,
-                  String middleName, String lastName, LocalDateTime dateOfBirth,
+    public Client(String clientId, User user, String firstName,
+                  String middleName, String lastName, LocalDate dateOfBirth,
                   DocumentTypeEnum documentType, Long documentId, String documentPrefix, String documentSuffix) {
-        this.id = id;
         this.clientId = clientId;
         this.user = user;
         this.firstName = firstName;
@@ -96,11 +96,11 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public LocalDateTime getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDateTime dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
