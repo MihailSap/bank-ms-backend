@@ -5,18 +5,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.dto.CardDTO;
 import ru.sapegin.kafka.KafkaProducerService;
 
 @RestController
-@RequestMapping("/api/client-product")
+@RequestMapping("/api/card")
 @RequiredArgsConstructor
-public class ClientProductController {
+public class CardController {
 
     private final KafkaProducerService kafkaProducerService;
 
     @PostMapping("/create")
-    public void createClientProduct(@RequestBody ClientProductDTO clientProductDTO) {
-        kafkaProducerService.inspectClientProduct(clientProductDTO);
+    public void create(@RequestBody CardDTO cardDTO){
+        kafkaProducerService.createCard(cardDTO);
     }
 }

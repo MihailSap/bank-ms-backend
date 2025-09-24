@@ -14,18 +14,17 @@ public class Card {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    private Long cardId;
+    private String cardId;
 
     private String paymentSystem;
 
     private String status;
 
-    public Card(Long id, Account account, Long cardId, String paymentSystem, String status) {
-        this.id = id;
+    public Card(Account account, String cardId, String paymentSystem) {
         this.account = account;
         this.cardId = cardId;
         this.paymentSystem = paymentSystem;
-        this.status = status;
+        this.status = "ACTIVE";
     }
 
     public Card() {
@@ -47,11 +46,11 @@ public class Card {
         this.account = account;
     }
 
-    public Long getCardId() {
+    public String getCardId() {
         return cardId;
     }
 
-    public void setCardId(Long cardId) {
+    public void setCardId(String cardId) {
         this.cardId = cardId;
     }
 

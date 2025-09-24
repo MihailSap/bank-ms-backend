@@ -3,6 +3,7 @@ package ru.sapegin.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sapegin.dto.AccountDTO;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.model.Account;
 import ru.sapegin.repository.AccountRepository;
@@ -16,7 +17,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public void create(ClientProductDTO accountDTO){
+    public AccountDTO create(ClientProductDTO accountDTO){
         var account = new Account(
                 accountDTO.clientId(),
                 accountDTO.productId(),
@@ -27,5 +28,23 @@ public class AccountService {
                 "ACTIVE"
         );
         accountRepository.save(account);
+        return mapToDTO(account);
+    }
+
+    public AccountDTO mapToDTO(Account account){
+        return new AccountDTO(
+                account.getClientId(),
+                account.getProductId(),
+                account.getBalance(),
+                account.getInterestRate(),
+                account.isRecalc(),
+                account.isCardExist(),
+                account.getStatus()
+        );
+    }
+
+    public Account getAccountById(Long accountId){
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
     }
 }

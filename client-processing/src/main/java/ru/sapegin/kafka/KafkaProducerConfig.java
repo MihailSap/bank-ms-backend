@@ -1,4 +1,4 @@
-package ru.sapegin.config;
+package ru.sapegin.kafka;
 
 
 import lombok.RequiredArgsConstructor;

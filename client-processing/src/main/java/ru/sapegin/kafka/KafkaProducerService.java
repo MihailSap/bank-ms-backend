@@ -1,19 +1,18 @@
-package ru.sapegin.service;
+package ru.sapegin.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import ru.sapegin.dto.CardDTO;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.enums.KeyEnum;
-import ru.sapegin.repository.ClientProductRepository;
+import ru.sapegin.service.ProductService;
 
 @Service
 @RequiredArgsConstructor
-public class ClientProductService {
-
+public class KafkaProducerService {
     private final ProductService productService;
-    private final ClientProductRepository clientProductRepository;
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -26,5 +25,9 @@ public class ClientProductService {
         } else {
             kafkaTemplate.send("client_credit_products", clientProductDTO);
         }
+    }
+
+    public void createCard(CardDTO cardDTO) {
+        kafkaTemplate.send("client_cards", cardDTO);
     }
 }
