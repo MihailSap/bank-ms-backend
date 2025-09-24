@@ -1,14 +1,20 @@
 package ru.sapegin.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.ProductDTO;
 import ru.sapegin.service.ProductService;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     private final ProductService productService;
 
@@ -34,4 +40,10 @@ public class ProductController {
     public void delete(@PathVariable("id") Long id){
         productService.delete(id);
     }
+
+//    @PostMapping("/send")
+//    public void sendToAP(@RequestBody MessageDTO messageDTO){
+//        kafkaTemplate.send("client_cards", messageDTO.text());
+//        log.info("Message sent to client_cards!!!");
+//    }
 }

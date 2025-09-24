@@ -22,19 +22,18 @@ public class Account {
 
     private boolean isRecalc;
 
-    private boolean cardExists;
+    private boolean cardExist;
 
     private String status;
 
-    public Account(Long id, Long clientId, Long productId, BigDecimal balance,
-                   BigDecimal interestRate, boolean isRecalc, boolean cardExists, String status) {
-        this.id = id;
+    public Account(Long clientId, Long productId, BigDecimal balance,
+                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, String status) {
         this.clientId = clientId;
         this.productId = productId;
         this.balance = balance;
         this.interestRate = interestRate;
         this.isRecalc = isRecalc;
-        this.cardExists = cardExists;
+        this.cardExist = cardExist;
         this.status = status;
     }
 
@@ -89,12 +88,12 @@ public class Account {
         isRecalc = recalc;
     }
 
-    public boolean isCardExists() {
-        return cardExists;
+    public boolean isCardExist() {
+        return cardExist;
     }
 
-    public void setCardExists(boolean cardExists) {
-        this.cardExists = cardExists;
+    public void setCardExist(boolean cardExists) {
+        this.cardExist = cardExists;
     }
 
     public String getStatus() {
