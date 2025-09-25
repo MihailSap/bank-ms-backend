@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.ClientDTO;
+import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.model.Client;
 import ru.sapegin.model.User;
 import ru.sapegin.repository.BlacklistRegistryRepository;
@@ -53,5 +54,17 @@ public class ClientService {
                 clientDTO.documentSuffix()
         );
         clientRepository.save(client);
+    }
+
+    public ClientFastDTO getClientDTO(Long id){
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(String.format("Клиент с id %d не найден", id)));
+
+        var clientFastDTO = new ClientFastDTO();
+        clientFastDTO.setFirstName(client.getFirstName());
+        clientFastDTO.setMiddleName(client.getMiddleName());
+        clientFastDTO.setLastName(client.getLastName());
+        clientFastDTO.setDocumentId(client.getDocumentId());
+        return clientFastDTO;
     }
 }

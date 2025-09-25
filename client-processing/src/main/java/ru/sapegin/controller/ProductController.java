@@ -40,10 +40,4 @@ public class ProductController {
     public void delete(@PathVariable("id") Long id){
         productService.delete(id);
     }
-
-//    @PostMapping("/send")
-//    public void sendToAP(@RequestBody MessageDTO messageDTO){
-//        kafkaTemplate.send("client_cards", messageDTO.text());
-//        log.info("Message sent to client_cards!!!");
-//    }
 }
