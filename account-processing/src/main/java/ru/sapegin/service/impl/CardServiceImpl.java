@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,19 +7,21 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.CardDTO;
 import ru.sapegin.model.Card;
 import ru.sapegin.repository.CardRepository;
+import ru.sapegin.service.CardServiceI;
 
 import java.util.Random;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CardService {
+public class CardServiceImpl implements CardServiceI {
 
     private final CardRepository cardRepository;
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     @Transactional
-    public CardDTO create(CardDTO cardDTO){
+    @Override
+    public CardDTO create(CardDTO cardDTO) {
         var accountId = cardDTO.getAccountId();
         var paymentSystem = cardDTO.getPaymentSystem();
         var account = accountService.getAccountById(accountId);
@@ -38,7 +40,8 @@ public class CardService {
         return mapToDTO(card);
     }
 
-    public static String generateCardId(String paymentSystem) {
+    @Override
+    public String generateCardId(String paymentSystem) {
         var random = new Random();
         var cardNumber = new StringBuilder();
         switch (paymentSystem.toUpperCase()) {
@@ -55,7 +58,8 @@ public class CardService {
         return cardNumber.toString();
     }
 
-    private static int calculateLuhnCheckDigit(String number) {
+    @Override
+    public int calculateLuhnCheckDigit(String number) {
         var sum = 0;
         var alternate = true;
         for (int i = number.length() - 1; i >= 0; i--) {
@@ -72,7 +76,8 @@ public class CardService {
         return (10 - (sum % 10)) % 10;
     }
 
-    public CardDTO mapToDTO(Card card){
+    @Override
+    public CardDTO mapToDTO(Card card) {
         return new CardDTO(
                 card.getAccount().getId(),
                 card.getCardId(),
@@ -80,5 +85,4 @@ public class CardService {
                 card.getStatus()
         );
     }
-
 }

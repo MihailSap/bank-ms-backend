@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,18 +8,20 @@ import ru.sapegin.dto.AccountDTO;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.model.Account;
 import ru.sapegin.repository.AccountRepository;
+import ru.sapegin.service.AccountServiceI;
 
 import java.math.BigDecimal;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountServiceImpl implements AccountServiceI {
 
     private final AccountRepository accountRepository;
 
     @Transactional
-    public AccountDTO create(ClientProductDTO accountDTO){
+    @Override
+    public AccountDTO create(ClientProductDTO accountDTO) {
         var account = new Account(
                 accountDTO.clientId(),
                 accountDTO.productId(),
@@ -34,7 +36,8 @@ public class AccountService {
         return mapToDTO(account);
     }
 
-    public AccountDTO mapToDTO(Account account){
+    @Override
+    public AccountDTO mapToDTO(Account account) {
         return new AccountDTO(
                 account.getClientId(),
                 account.getProductId(),
@@ -46,7 +49,8 @@ public class AccountService {
         );
     }
 
-    public Account getAccountById(Long accountId){
+    @Override
+    public Account getAccountById(Long accountId) {
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account с таким id не найден"));
     }

@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,19 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.ProductDTO;
 import ru.sapegin.model.Product;
 import ru.sapegin.repository.ProductRepository;
+import ru.sapegin.service.ProductServiceI;
 
 import java.time.LocalDate;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ProductService {
+public class ProductServiceImpl implements ProductServiceI {
 
     private final ProductRepository productRepository;
 
     @Transactional
+    @Override
     public ProductDTO create(ProductDTO productDTO) {
-
         var product = new Product(productDTO.getName(), productDTO.getKey(), LocalDate.now());
         productRepository.save(product);
         log.info("СОЗДАН Product: {}", product);
@@ -28,7 +29,8 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO update(Long id, ProductDTO productDTO){
+    @Override
+    public ProductDTO update(Long id, ProductDTO productDTO) {
         var product = getProductById(id);
         product.setName(productDTO.getName());
         product.setKey(productDTO.getKey());
@@ -39,18 +41,21 @@ public class ProductService {
     }
 
     @Transactional
-    public void delete(Long id){
+    @Override
+    public void delete(Long id) {
         var product = getProductById(id);
         productRepository.delete(product);
         log.info("УДАЛЁН Product: {}", product);
     }
 
-    public Product getProductById(Long id){
+    @Override
+    public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public ProductDTO mapToProductDTO(Product product){
+    @Override
+    public ProductDTO mapToProductDTO(Product product) {
         return new ProductDTO(product.getName(), product.getKey(),
                 product.getCreateDate(), product.getProductId());
     }

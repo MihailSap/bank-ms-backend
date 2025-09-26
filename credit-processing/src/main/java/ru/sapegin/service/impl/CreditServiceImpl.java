@@ -1,23 +1,25 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.sapegin.model.PaymentRegistry;
 import ru.sapegin.repository.PaymentRegistryRepository;
 import ru.sapegin.repository.ProductRegistryRepository;
+import ru.sapegin.service.CreditServiceI;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
-public class CreditService {
+public class CreditServiceImpl implements CreditServiceI {
 
     private BigDecimal N;
     private final ProductRegistryRepository productRegistryRepository;
     private final PaymentRegistryRepository paymentRegistryRepository;
 
-    public boolean canClientOpenCredit(Long clientId){
+    @Override
+    public boolean canClientOpenCredit(Long clientId) {
         if(hasExpiredPayment(clientId)){
             return false;
         }
@@ -28,6 +30,7 @@ public class CreditService {
         return allCreditsAmount.compareTo(N) > 0;
     }
 
+    @Override
     public BigDecimal getClientDebt(Long clientId) {
         var clientProducts = productRegistryRepository.findByClientId(clientId);
         var totalDebt = BigDecimal.ZERO;
@@ -46,7 +49,8 @@ public class CreditService {
         return totalDebt;
     }
 
-    public boolean hasExpiredPayment(Long clientId){
+    @Override
+    public boolean hasExpiredPayment(Long clientId) {
         var clientProductRegistries = productRegistryRepository.findByClientId(clientId);
         for (var clientProductRegistry : clientProductRegistries) {
             var clientPaymentRegistries = paymentRegistryRepository.findByProductRegistryId(clientProductRegistry.getId());
@@ -59,8 +63,8 @@ public class CreditService {
         return false;
     }
 
-    public BigDecimal getCurrentCreditAmount(){
+    @Override
+    public BigDecimal getCurrentCreditAmount() {
         return BigDecimal.ZERO;
     }
 }
-

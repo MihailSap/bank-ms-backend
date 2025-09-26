@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,19 +11,21 @@ import ru.sapegin.model.Client;
 import ru.sapegin.model.User;
 import ru.sapegin.repository.BlacklistRegistryRepository;
 import ru.sapegin.repository.ClientRepository;
+import ru.sapegin.service.ClientServiceI;
 
 import java.time.LocalDate;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ClientService {
+public class ClientServiceImpl implements ClientServiceI {
 
     private final BlacklistRegistryRepository blacklistRegistryRepository;
     private final ClientRepository clientRepository;
 
     @Transactional
-    public void create(ClientDTO clientDTO, User user){
+    @Override
+    public void create(ClientDTO clientDTO, User user) {
         if(existsInBlacklist(clientDTO)){
             throw new RuntimeException("Клиент находится в чёрном списке");
         }
@@ -38,7 +40,8 @@ public class ClientService {
         log.info("СОЗДАН Client: {}", client);
     }
 
-    public boolean existsInBlacklist(ClientDTO clientDTO){
+    @Override
+    public boolean existsInBlacklist(ClientDTO clientDTO) {
         var data = blacklistRegistryRepository.findByDocumentId(clientDTO.documentId());
         if (data.isEmpty()) {
             return false;
@@ -48,12 +51,14 @@ public class ClientService {
         return blackExpirationDate == null || now.isBefore(blackExpirationDate);
     }
 
-    public Client getClientById(Long id){
+    @Override
+    public Client getClientById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(String.format("Клиент с id %d не найден", id)));
     }
 
-    public ClientFastDTO mapToDTO(Client client){
+    @Override
+    public ClientFastDTO mapToDTO(Client client) {
         var clientFastDTO = new ClientFastDTO();
         clientFastDTO.setFirstName(client.getFirstName());
         clientFastDTO.setMiddleName(client.getMiddleName());
@@ -62,7 +67,8 @@ public class ClientService {
         return clientFastDTO;
     }
 
-    public Client mapFromDTO(ClientDTO clientDTO, String clientId, User user){
+    @Override
+    public Client mapFromDTO(ClientDTO clientDTO, String clientId, User user) {
         return new Client(
                 clientId,
                 user,

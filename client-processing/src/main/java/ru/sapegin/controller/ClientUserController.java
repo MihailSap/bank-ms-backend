@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.dto.RegistrationDTO;
 import ru.sapegin.dto.UserDTO;
-import ru.sapegin.service.ClientService;
-import ru.sapegin.service.UserService;
+import ru.sapegin.service.impl.ClientServiceImpl;
+import ru.sapegin.service.impl.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api/ms1")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ClientUserController {
 
-    private final ClientService clientService;
-    private final UserService userService;
+    private final ClientServiceImpl clientService;
+    private final UserServiceImpl userService;
 
     @PostMapping("/register")
     public UserDTO register(@RequestBody RegistrationDTO registrationDTO){

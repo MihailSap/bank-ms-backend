@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,18 +7,20 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.model.ProductRegistry;
 import ru.sapegin.repository.ProductRegistryRepository;
+import ru.sapegin.service.ProductRegistryServiceI;
 
 import java.time.LocalDate;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProductRegistryService {
+public class ProductRegistryServiceImpl implements ProductRegistryServiceI {
 
     private final ProductRegistryRepository productRegistryRepository;
 
     @Transactional
-    public void create(ClientProductDTO clientProductDTO){
+    @Override
+    public void create(ClientProductDTO clientProductDTO) {
         var productRegistry = new ProductRegistry();
         productRegistry.setProductId(clientProductDTO.productId());
         productRegistry.setAccountId(0L);

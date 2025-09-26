@@ -1,4 +1,4 @@
-package ru.sapegin.service;
+package ru.sapegin.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,20 +9,22 @@ import ru.sapegin.dto.ClientProductFullDTO;
 import ru.sapegin.enums.StatusEnum;
 import ru.sapegin.model.ClientProduct;
 import ru.sapegin.repository.ClientProductRepository;
+import ru.sapegin.service.ClientProductServiceI;
 
 import java.time.LocalDate;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ClientProductService {
+public class ClientProductServiceImpl implements ClientProductServiceI {
 
     private final ClientProductRepository clientProductRepository;
-    private final ProductService productService;
-    private final ClientService clientService;
+    private final ProductServiceImpl productService;
+    private final ClientServiceImpl clientService;
 
     @Transactional
-    public ClientProductFullDTO create(ClientProductDTO clientProductDTO){
+    @Override
+    public ClientProductFullDTO create(ClientProductDTO clientProductDTO) {
         var client = clientService.getClientById(clientProductDTO.clientId());
         var product = productService.getProductById(clientProductDTO.productId());
         var clientProduct = new ClientProduct();
@@ -35,7 +37,8 @@ public class ClientProductService {
         return mapToFullDTO(clientProduct);
     }
 
-    public ClientProductFullDTO mapToFullDTO(ClientProduct clientProduct){
+    @Override
+    public ClientProductFullDTO mapToFullDTO(ClientProduct clientProduct) {
         return new ClientProductFullDTO(
                 clientProduct.getClient().getId(),
                 clientProduct.getProduct().getId(),

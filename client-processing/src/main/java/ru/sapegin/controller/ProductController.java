@@ -1,27 +1,20 @@
 package ru.sapegin.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.ProductDTO;
-import ru.sapegin.service.ProductService;
+import ru.sapegin.service.impl.ProductServiceImpl;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/product")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductController {
 
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
-
-    private final ProductService productService;
-
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductServiceImpl productService;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)

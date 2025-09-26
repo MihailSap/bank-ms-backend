@@ -9,8 +9,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.CardDTO;
-import ru.sapegin.service.AccountService;
-import ru.sapegin.service.CardService;
+import ru.sapegin.service.impl.AccountServiceImpl;
+import ru.sapegin.service.impl.CardServiceImpl;
 
 @Getter
 @Slf4j
@@ -18,8 +18,8 @@ import ru.sapegin.service.CardService;
 @RequiredArgsConstructor
 public class KafkaConsumerService {
 
-    private final AccountService accountService;
-    private final CardService cardService;
+    private final AccountServiceImpl accountService;
+    private final CardServiceImpl cardService;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "client_products")

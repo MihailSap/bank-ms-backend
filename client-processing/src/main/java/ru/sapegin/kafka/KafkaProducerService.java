@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.sapegin.dto.CardDTO;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.enums.KeyEnum;
-import ru.sapegin.service.ProductService;
+import ru.sapegin.service.impl.ProductServiceImpl;
 
 @Slf4j
 @Service
@@ -17,7 +17,7 @@ public class KafkaProducerService {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
     public void inspectClientProduct(ClientProductDTO clientProductDTO){
         var product = productService.getProductById(clientProductDTO.productId());
@@ -28,7 +28,6 @@ public class KafkaProducerService {
             kafkaTemplate.send("client_credit_products", clientProductDTO);
         }
     }
-
 
     public void createCard(CardDTO cardDTO) {
         kafkaTemplate.send("client_cards", cardDTO);
