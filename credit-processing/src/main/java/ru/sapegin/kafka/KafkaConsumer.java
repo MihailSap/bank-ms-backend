@@ -23,19 +23,8 @@ public class KafkaConsumer {
     public void listen(String message) throws JsonProcessingException {
         var clientProductDTO = objectMapper.readValue(message, ClientProductDTO.class);
         var clientDataDTO = getClientInfo(clientProductDTO.clientId());
-//        var sec = checkSecondParam();
 
-//        var clientCreditsAmount = 0;
-//        var currCreditAmount = 0;
-//        if(clientCreditsAmount + currCreditAmount > N){
-//            throw new RuntimeException("Отказано");
-//        }
-//        log.info(clientDataDTO.toString());
     }
-
-//    public boolean checkSecondParam(ClientProductDTO clientProductDTO ){
-//
-//    }
 
     public ClientDataDTO getClientInfo(Long clientId) {
         log.info("Getting client info");

@@ -29,7 +29,7 @@ public class ProductController {
         return productService.create(productDTO);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}/update")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO update(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO){
         return productService.update(id, productDTO);

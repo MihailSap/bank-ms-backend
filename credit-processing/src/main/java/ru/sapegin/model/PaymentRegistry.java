@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,13 +26,13 @@ public class PaymentRegistry {
     @JoinColumn(name = "product_registry_id", nullable = false)
     private ProductRegistry productRegistry;
 
-    private LocalDateTime paymentDate;
+    private LocalDate paymentDate;
 
     private BigDecimal amount;
 
     private BigDecimal interestRateAmount;
 
-    private BigDecimal debtRateAmount;
+    private BigDecimal debtAmount;
 
     private boolean expired;
 

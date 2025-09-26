@@ -1,9 +1,17 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "account")
 public class Account {
@@ -34,73 +42,6 @@ public class Account {
         this.interestRate = interestRate;
         this.isRecalc = isRecalc;
         this.cardExist = cardExist;
-        this.status = status;
-    }
-
-    public Account() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(BigDecimal interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public boolean isRecalc() {
-        return isRecalc;
-    }
-
-    public void setRecalc(boolean recalc) {
-        isRecalc = recalc;
-    }
-
-    public boolean isCardExist() {
-        return cardExist;
-    }
-
-    public void setCardExist(boolean cardExists) {
-        this.cardExist = cardExists;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
     }
 }
