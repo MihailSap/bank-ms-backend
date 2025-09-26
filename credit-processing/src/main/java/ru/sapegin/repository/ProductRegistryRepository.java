@@ -8,6 +8,6 @@ import ru.sapegin.model.ProductRegistry;
 import java.util.List;
 
 @Repository
-public interface ProductRegistryRepository extends JpaRepository<PaymentRegistry, Long> {
+public interface ProductRegistryRepository extends JpaRepository<ProductRegistry, Long> {
     List<ProductRegistry> findByClientId(Long clientId);
 }

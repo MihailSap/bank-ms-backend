@@ -1,10 +1,7 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.sapegin.enums.TransactionStatusEnum;
 
 import java.math.BigDecimal;
@@ -13,6 +10,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

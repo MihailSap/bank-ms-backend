@@ -1,35 +1,32 @@
 package ru.sapegin.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.sapegin.dto.ClientDTO;
 import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.dto.RegistrationDTO;
+import ru.sapegin.dto.UserDTO;
 import ru.sapegin.service.ClientService;
 import ru.sapegin.service.UserService;
 
 @RestController
 @RequestMapping("/api/ms1")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ClientUserController {
 
     private final ClientService clientService;
     private final UserService userService;
 
-    @Autowired
-    public ClientUserController(ClientService clientService, UserService userService) {
-        this.clientService = clientService;
-        this.userService = userService;
-    }
-
     @PostMapping("/register")
-    public String register(@RequestBody RegistrationDTO registrationDTO){
-        var user = userService.createAndGet(registrationDTO.userDTO());
+    public UserDTO register(@RequestBody RegistrationDTO registrationDTO){
+        var user = userService.create(registrationDTO.userDTO());
         clientService.create(registrationDTO.clientDTO(), user);
-        return "Success";
+        return userService.mapToDTO(user);
     }
 
     @GetMapping("/client/{id}")
     public ClientFastDTO getClientData(@PathVariable("id") Long id){
-        return clientService.getClientDTO(id);
+        var client = clientService.getClientById(id);
+        return clientService.mapToDTO(client);
     }
 }

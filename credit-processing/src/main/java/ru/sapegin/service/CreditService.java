@@ -17,16 +17,15 @@ public class CreditService {
     private final ProductRegistryRepository productRegistryRepository;
     private final PaymentRegistryRepository paymentRegistryRepository;
 
-    public boolean decide(Long clientId){
-        var clientDebt = getClientDebt(clientId);
-        var currentCreditAmount = getCurrentCreditAmount();
-        var abc = clientDebt.add(currentCreditAmount);
-        if(abc.compareTo(N) > 0){
+    public boolean canClientOpenCredit(Long clientId){
+        if(hasExpiredPayment(clientId)){
             return false;
         }
 
-        var isClientHasExpires = isClientHasExpires(clientId);
-        return !isClientHasExpires;
+        var clientDebt = getClientDebt(clientId);
+        var currentCreditAmount = getCurrentCreditAmount();
+        var allCreditsAmount = clientDebt.add(currentCreditAmount);
+        return allCreditsAmount.compareTo(N) > 0;
     }
 
     public BigDecimal getClientDebt(Long clientId) {
@@ -47,11 +46,7 @@ public class CreditService {
         return totalDebt;
     }
 
-    public BigDecimal getCurrentCreditAmount(){
-        return BigDecimal.ZERO;
-    }
-
-    public boolean isClientHasExpires(Long clientId){
+    public boolean hasExpiredPayment(Long clientId){
         var clientProductRegistries = productRegistryRepository.findByClientId(clientId);
         for (var clientProductRegistry : clientProductRegistries) {
             var clientPaymentRegistries = paymentRegistryRepository.findByProductRegistryId(clientProductRegistry.getId());
@@ -62,6 +57,10 @@ public class CreditService {
             }
         }
         return false;
+    }
+
+    public BigDecimal getCurrentCreditAmount(){
+        return BigDecimal.ZERO;
     }
 }
 

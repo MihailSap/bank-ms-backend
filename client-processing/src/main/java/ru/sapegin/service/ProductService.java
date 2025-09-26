@@ -1,5 +1,7 @@
 package ru.sapegin.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,20 +9,21 @@ import ru.sapegin.dto.ProductDTO;
 import ru.sapegin.model.Product;
 import ru.sapegin.repository.ProductRepository;
 
+import java.time.LocalDate;
+
+@Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     @Transactional
     public ProductDTO create(ProductDTO productDTO) {
-        var product = new Product(productDTO.getName(), productDTO.getKey(), productDTO.getCreateDate());
-        product = productRepository.save(product);
+
+        var product = new Product(productDTO.getName(), productDTO.getKey(), LocalDate.now());
+        productRepository.save(product);
+        log.info("СОЗДАН Product: {}", product);
         return mapToProductDTO(product);
     }
 
@@ -29,9 +32,9 @@ public class ProductService {
         var product = getProductById(id);
         product.setName(productDTO.getName());
         product.setKey(productDTO.getKey());
-        product.setCreateDate(productDTO.getCreateDate());
         product.setProductId(String.format("%s%d", productDTO.getKey(), id));
         productRepository.save(product);
+        log.info("ОБНОВЛЕН Product: {}", product);
         return mapToProductDTO(product);
     }
 
@@ -39,6 +42,7 @@ public class ProductService {
     public void delete(Long id){
         var product = getProductById(id);
         productRepository.delete(product);
+        log.info("УДАЛЁН Product: {}", product);
     }
 
     public Product getProductById(Long id){
@@ -47,12 +51,7 @@ public class ProductService {
     }
 
     public ProductDTO mapToProductDTO(Product product){
-        return new ProductDTO(product.getId(), product.getName(), product.getKey(),
+        return new ProductDTO(product.getName(), product.getKey(),
                 product.getCreateDate(), product.getProductId());
-    }
-    public Product mapToProduct(ProductDTO productDTO){
-        var product = new Product(productDTO.getName(), productDTO.getKey(), productDTO.getCreateDate());
-        product.setProductId(String.format("%s%d", productDTO.getKey(), product.getId()));
-        return product;
     }
 }

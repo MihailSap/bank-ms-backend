@@ -1,0 +1,31 @@
+package ru.sapegin.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.model.ProductRegistry;
+import ru.sapegin.repository.ProductRegistryRepository;
+
+import java.time.LocalDate;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ProductRegistryService {
+
+    private final ProductRegistryRepository productRegistryRepository;
+
+    @Transactional
+    public void create(ClientProductDTO clientProductDTO){
+        var productRegistry = new ProductRegistry();
+        productRegistry.setProductId(clientProductDTO.productId());
+        productRegistry.setAccountId(0L);
+        productRegistry.setClientId(clientProductDTO.clientId());
+        productRegistry.setInterestRate(12);
+        productRegistry.setOpenDate(LocalDate.now());
+        productRegistryRepository.save(productRegistry);
+        log.info("СОЗДАН ProductRegistry: {}", productRegistry);
+    }
+}

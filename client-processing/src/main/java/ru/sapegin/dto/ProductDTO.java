@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class ProductDTO {
-    private Long id;
     private String name;
     private KeyEnum key;
     private LocalDate createDate;

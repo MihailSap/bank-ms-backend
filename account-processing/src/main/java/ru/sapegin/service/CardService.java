@@ -1,6 +1,7 @@
 package ru.sapegin.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.CardDTO;
@@ -9,6 +10,7 @@ import ru.sapegin.repository.CardRepository;
 
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -32,6 +34,7 @@ public class CardService {
         );
 
         cardRepository.save(card);
+        log.info("СОЗДАНА Card: {}", card);
         return mapToDTO(card);
     }
 
@@ -77,4 +80,5 @@ public class CardService {
                 card.getStatus()
         );
     }
+
 }

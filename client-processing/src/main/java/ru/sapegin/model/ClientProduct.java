@@ -1,17 +1,14 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.sapegin.enums.StatusEnum;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.LocalDate;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -29,9 +26,9 @@ public class ClientProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private LocalDateTime openDate;
+    private LocalDate openDate;
 
-    private LocalDateTime closeDate;
+    private LocalDate closeDate;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum status;

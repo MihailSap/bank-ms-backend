@@ -6,29 +6,37 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import ru.sapegin.dto.ClientDataDTO;
 import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.service.RestService;
+import ru.sapegin.service.CreditService;
+import ru.sapegin.service.ProductRegistryService;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class KafkaConsumer {
 
-    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final int N = 1000000;
+    private final RestService restService;
+    private final CreditService creditService;
+    private final ProductRegistryService productRegistryService;
 
     @KafkaListener(topics = "client_credit_products")
     public void listen(String message) throws JsonProcessingException {
         var clientProductDTO = objectMapper.readValue(message, ClientProductDTO.class);
-        var clientDataDTO = getClientInfo(clientProductDTO.clientId());
+        var clientDataDTO = restService.getClientInfo(clientProductDTO.clientId());
 
-    }
 
-    public ClientDataDTO getClientInfo(Long clientId) {
-        log.info("Getting client info");
-        var url = "http://localhost:8082/api/ms1/client/" + clientId;
-        return restTemplate.getForObject(url, ClientDataDTO.class);
+
+        log.info(clientDataDTO.toString());
+
+
+
+        if (creditService.canClientOpenCredit(clientProductDTO.clientId())){
+            restService.createClientProduct(clientProductDTO);
+            productRegistryService.create(clientProductDTO);
+        } else {
+            throw new RuntimeException("Отказано");
+        }
     }
 }

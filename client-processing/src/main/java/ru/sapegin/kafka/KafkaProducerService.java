@@ -29,6 +29,7 @@ public class KafkaProducerService {
         }
     }
 
+
     public void createCard(CardDTO cardDTO) {
         kafkaTemplate.send("client_cards", cardDTO);
     }

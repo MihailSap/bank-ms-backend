@@ -1,5 +1,7 @@
 package ru.sapegin.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,36 +14,56 @@ import ru.sapegin.repository.ClientRepository;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ClientService {
 
     private final BlacklistRegistryRepository blacklistRegistryRepository;
-
     private final ClientRepository clientRepository;
-
-    @Autowired
-    public ClientService(BlacklistRegistryRepository blacklistRegistryRepository, ClientRepository clientRepository) {
-        this.blacklistRegistryRepository = blacklistRegistryRepository;
-        this.clientRepository = clientRepository;
-    }
 
     @Transactional
     public void create(ClientDTO clientDTO, User user){
-        var data = blacklistRegistryRepository.findByDocumentId(clientDTO.documentId());
-        if (data.isPresent()) {
-            var now = LocalDate.now();
-            var blackExpirationDate = data.get().getBlacklistExpirationDate();
-            if(blackExpirationDate == null || now.isBefore(blackExpirationDate)) {
-                throw new RuntimeException("Документ находится в чёрном списке");
-            }
+        if(existsInBlacklist(clientDTO)){
+            throw new RuntimeException("Клиент находится в чёрном списке");
         }
 
-        var sss = String.format("%02d", clientDTO.regionNumber()) + String.format("%02d", clientDTO.bankDivisionNumber());
+        var prefix = String.format("%02d", clientDTO.regionNumber()) + String.format("%02d", clientDTO.bankDivisionNumber());
         var clientId = String.format("%02d%02d%08d",
                 clientDTO.regionNumber(), clientDTO.bankDivisionNumber(),
-                clientRepository.countByRegionAndDivision(sss) + 1);
+                clientRepository.countByRegionAndDivision(prefix) + 1);
 
-        var client = new Client(
+        var client = mapFromDTO(clientDTO, clientId, user);
+        clientRepository.save(client);
+        log.info("СОЗДАН Client: {}", client);
+    }
+
+    public boolean existsInBlacklist(ClientDTO clientDTO){
+        var data = blacklistRegistryRepository.findByDocumentId(clientDTO.documentId());
+        if (data.isEmpty()) {
+            return false;
+        }
+        var now = LocalDate.now();
+        var blackExpirationDate = data.get().getBlacklistExpirationDate();
+        return blackExpirationDate == null || now.isBefore(blackExpirationDate);
+    }
+
+    public Client getClientById(Long id){
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(String.format("Клиент с id %d не найден", id)));
+    }
+
+    public ClientFastDTO mapToDTO(Client client){
+        var clientFastDTO = new ClientFastDTO();
+        clientFastDTO.setFirstName(client.getFirstName());
+        clientFastDTO.setMiddleName(client.getMiddleName());
+        clientFastDTO.setLastName(client.getLastName());
+        clientFastDTO.setDocumentId(client.getDocumentId());
+        return clientFastDTO;
+    }
+
+    public Client mapFromDTO(ClientDTO clientDTO, String clientId, User user){
+        return new Client(
                 clientId,
                 user,
                 clientDTO.firstName(),
@@ -53,18 +75,5 @@ public class ClientService {
                 clientDTO.documentPrefix(),
                 clientDTO.documentSuffix()
         );
-        clientRepository.save(client);
-    }
-
-    public ClientFastDTO getClientDTO(Long id){
-        var client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Клиент с id %d не найден", id)));
-
-        var clientFastDTO = new ClientFastDTO();
-        clientFastDTO.setFirstName(client.getFirstName());
-        clientFastDTO.setMiddleName(client.getMiddleName());
-        clientFastDTO.setLastName(client.getLastName());
-        clientFastDTO.setDocumentId(client.getDocumentId());
-        return clientFastDTO;
     }
 }

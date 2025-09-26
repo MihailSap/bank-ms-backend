@@ -1,6 +1,7 @@
 package ru.sapegin.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.AccountDTO;
@@ -10,6 +11,7 @@ import ru.sapegin.repository.AccountRepository;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -28,6 +30,7 @@ public class AccountService {
                 "ACTIVE"
         );
         accountRepository.save(account);
+        log.info("СОЗДАН Account: {}", account);
         return mapToDTO(account);
     }
 
@@ -45,6 +48,6 @@ public class AccountService {
 
     public Account getAccountById(Long accountId){
         return accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new RuntimeException("Account с таким id не найден"));
     }
 }
