@@ -7,6 +7,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.sapegin.dto.CardDTO;
 import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.dto.TransactionDTO;
 import ru.sapegin.enums.KeyEnum;
 import ru.sapegin.service.impl.ProductServiceImpl;
 
@@ -31,5 +32,9 @@ public class KafkaProducerService {
 
     public void createCard(CardDTO cardDTO) {
         kafkaTemplate.send("client_cards", cardDTO);
+    }
+
+    public void createTransaction(TransactionDTO transactionDTO){
+        kafkaTemplate.send("client_transactions", transactionDTO);
     }
 }

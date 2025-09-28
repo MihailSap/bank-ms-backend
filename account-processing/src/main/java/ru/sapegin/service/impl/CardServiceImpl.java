@@ -85,4 +85,10 @@ public class CardServiceImpl implements CardServiceI {
                 card.getStatus()
         );
     }
+
+    @Override
+    public Card getCardById(Long id) {
+        return cardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Card с таким id не найдена"));
+    }
 }

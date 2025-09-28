@@ -12,4 +12,6 @@ public interface CardServiceI {
     int calculateLuhnCheckDigit(String number);
 
     CardDTO mapToDTO(Card card);
+
+    Card getCardById(Long id);
 }

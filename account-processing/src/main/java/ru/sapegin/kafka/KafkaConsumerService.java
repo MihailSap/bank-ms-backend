@@ -9,8 +9,11 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.CardDTO;
+import ru.sapegin.dto.PaymentDTO;
+import ru.sapegin.dto.TransactionDTO;
 import ru.sapegin.service.impl.AccountServiceImpl;
 import ru.sapegin.service.impl.CardServiceImpl;
+import ru.sapegin.service.impl.TransactionServiceImpl;
 
 @Getter
 @Slf4j
@@ -21,6 +24,7 @@ public class KafkaConsumerService {
     private final AccountServiceImpl accountService;
     private final CardServiceImpl cardService;
     private final ObjectMapper objectMapper;
+    private final TransactionServiceImpl transactionService;
 
     @KafkaListener(topics = "client_products")
     public void createAccount(String message) throws JsonProcessingException {
@@ -37,7 +41,15 @@ public class KafkaConsumerService {
     }
 
     @KafkaListener(topics = "client_transactions")
-    public void listenClientTransactions(){
-        log.info("LISTENER: прослушивается топик client_transactions");
+    public void listenClientTransactions(String message) throws JsonProcessingException {
+        var transactionDTO = objectMapper.readValue(message, TransactionDTO.class);
+        var transaction = transactionService.proccessGetTransaction(transactionDTO);
+        log.info("LISTENER: Transaction: {}", transaction);
+    }
+
+    @KafkaListener(topics = "client_payments")
+    public void listenClientProducts(String message) throws JsonProcessingException {
+        var paymentDTO = objectMapper.readValue(message, PaymentDTO.class);
+        log.info("LISTENER: Payment: {}", message);
     }
 }

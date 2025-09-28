@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.AccountDTO;
 import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.dto.TransactionDTO;
 import ru.sapegin.model.Account;
 import ru.sapegin.repository.AccountRepository;
 import ru.sapegin.service.AccountServiceI;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 public class AccountServiceImpl implements AccountServiceI {
 
     private final AccountRepository accountRepository;
+    private final PaymentServiceImpl paymentServiceImpl;
 
     @Transactional
     @Override
@@ -32,8 +34,24 @@ public class AccountServiceImpl implements AccountServiceI {
                 "ACTIVE"
         );
         accountRepository.save(account);
+        if(account.isRecalc()){
+            paymentServiceImpl.createCreditPayments(account, 5);
+        }
         log.info("СОЗДАН Account: {}", account);
         return mapToDTO(account);
+    }
+
+    public Account proccessAccount(TransactionDTO transactionDTO){
+        var account = getAccountById(transactionDTO.getAccountId());
+        if(account.getStatus().equals("ARRESTED") || account.getStatus().equals("BLOCKED")){
+            throw new RuntimeException("Аккаунт заблокирован");
+        }
+        if(transactionDTO.getType().equals("DEBITING")){
+            account.setBalance(account.getBalance().subtract(transactionDTO.getAmount()));
+        } else if(transactionDTO.getType().equals("ACCRUAL")){
+            account.setBalance(account.getBalance().add(transactionDTO.getAmount()));
+        }
+        return account;
     }
 
     @Override
