@@ -4,18 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sapegin.enums.KeyEnum;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientFastDTO {
+public class ClientProductKeyDTO {
 
-    private String firstName;
+    private Long clientId;
 
-    private String middleName;
+    private Long productId;
 
-    private String lastName;
+    private int interestRate;
 
-    private Long documentId;
+    private KeyEnum keyType;
 }

@@ -3,6 +3,7 @@ package ru.sapegin.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.sapegin.enums.TransactionStatusEnum;
+import ru.sapegin.enums.TransactionTypeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,7 +30,8 @@ public class Transaction {
     @JoinColumn(name = "card_id")
     private Card card;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TransactionTypeEnum type;
 
     private BigDecimal amount;
 

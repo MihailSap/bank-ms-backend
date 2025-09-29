@@ -4,18 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sapegin.enums.PaymentTypeEnum;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientFastDTO {
+public class PaymentDTO {
 
-    private String firstName;
+    private Long accountId;
 
-    private String middleName;
+    private BigDecimal amount;
 
-    private String lastName;
-
-    private Long documentId;
+    private PaymentTypeEnum type;
 }
