@@ -1,6 +1,6 @@
 package ru.sapegin.enums;
 
-public enum StatusEnum {
+public enum CardStatusEnum {
     ACTIVE,
     CLOSED,
     BLOCKED,

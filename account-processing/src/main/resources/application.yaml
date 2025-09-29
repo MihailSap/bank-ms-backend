@@ -28,7 +28,7 @@ server:
   port: 8081
 
 transaction:
-  max-count: 2
+  max-count: 100
   period:
     start-days-offset: 10
     end-days-offset: 10

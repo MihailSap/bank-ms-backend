@@ -10,9 +10,11 @@ import ru.sapegin.enums.TransactionStatusEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.model.Card;
 import ru.sapegin.model.Transaction;
+import ru.sapegin.repository.PaymentRepository;
 import ru.sapegin.repository.TransactionRepository;
 import ru.sapegin.service.TransactionServiceI;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -20,9 +22,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionServiceI {
 
-    private final TransactionRepository transactionRepository;
     private final CardServiceImpl cardService;
     private final AccountServiceImpl accountService;
+    private final PaymentServiceImpl paymentService;
+    private final TransactionRepository transactionRepository;
+    private final PaymentRepository paymentRepository;
 
     @Value("${transaction.max-count}")
     private int N;
@@ -36,43 +40,37 @@ public class TransactionServiceImpl implements TransactionServiceI {
     @Transactional
     @Override
     public TransactionDTO proccessGetTransaction(TransactionDTO transactionDTO){
-        var account = accountService.proccessAccount(transactionDTO);
+        var account = accountService.updateAccountByTransaction(transactionDTO);
         var card = cardService.getCardById(transactionDTO.getCardId());
         var transaction = create(transactionDTO, card, account);
-        proccessCard(card, account, transaction);
-
+        var transactionsByCardId = transactionRepository.findByCardId(card.getId());
+        var cnt = cardService.getTransactionsCountByTime(transactionsByCardId, sT, eT);
+        checkTransactionsCount(cnt, account, transaction);
         if(transactionDTO.getType().equals("ACCRUAL") && account.isRecalc()){
-            var transactionDate = transaction.getTimestamp();
-            var creditPaymentDate = LocalDateTime.now(); //TODO: Поменять заглушку
-            if(transactionDate.isAfter(creditPaymentDate) || transactionDate.isEqual(creditPaymentDate)){
-                if(account.getBalance().compareTo(transaction.getAmount()) < 0){
-                    account.setBalance(account.getBalance().subtract(transaction.getAmount()));
+            if (paymentService.isPaymentExist(account)) {
+                var creditMoths = 24;
+                paymentService.createCreditPayments(account, creditMoths, transactionDTO.getAmount());
+            }
+            var paymentOpt = paymentService.getNextCreditPaymentIfExists(account);
+            if(paymentOpt.isPresent()){
+                var payment = paymentOpt.get();
+                if(account.getBalance().compareTo(payment.getAmount()) >= 0){
+                    accountService.debitMoney(account, payment.getAmount());
+                    payment.setPayedAt(LocalDate.now());
+                } else {
+                    payment.setExpired(true);
                 }
-            } else {
-                log.info("EXPIRED!!!");
+                paymentRepository.save(payment);
             }
         }
-
         return mapToDTO(transaction);
     }
 
-    // Card
-    public void proccessCard(Card card, Account account, Transaction transaction){
-        var transactionsByCardId = transactionRepository.findByCardId(card.getId());
-        var cnt = 0;
-        if(!transactionsByCardId.isEmpty()){
-            for(var transactionAA : transactionsByCardId){
-                var timestamp = transactionAA.getTimestamp();
-                var startT = LocalDateTime.now().minusDays(sT);
-                var endT = LocalDateTime.now().plusDays(eT);
-                if(timestamp.isAfter(startT) && timestamp.isBefore(endT)){
-                    cnt++;
-                }
-            }
-        }
+    @Transactional
+    public void checkTransactionsCount(int cnt, Account account, Transaction transaction){
         if(cnt > N){
-            account.setStatus("BLOCKED");
-            transaction.setType("BLOCKED");
+            accountService.blockAccount(account);
+            blockTransaction(transaction);
         }
     }
 
@@ -101,5 +99,11 @@ public class TransactionServiceImpl implements TransactionServiceI {
                 "ALLOWED",
                 transaction.getTimestamp()
         );
+    }
+
+    @Transactional
+    public void blockTransaction(Transaction transaction){
+        transaction.setStatus(TransactionStatusEnum.BLOCKED);
+        transactionRepository.save(transaction);
     }
 }

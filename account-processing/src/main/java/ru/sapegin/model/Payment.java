@@ -30,7 +30,9 @@ public class Payment {
 
     private boolean isCredit;
 
-    private LocalDateTime payedAt;
+    private LocalDate payedAt;
 
     private String type;
+
+    private boolean expired;
 }

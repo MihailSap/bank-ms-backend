@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 public class AccountServiceImpl implements AccountServiceI {
 
     private final AccountRepository accountRepository;
-    private final PaymentServiceImpl paymentServiceImpl;
 
     @Transactional
     @Override
@@ -34,14 +33,12 @@ public class AccountServiceImpl implements AccountServiceI {
                 "ACTIVE"
         );
         accountRepository.save(account);
-        if(account.isRecalc()){
-            paymentServiceImpl.createCreditPayments(account, 5);
-        }
         log.info("СОЗДАН Account: {}", account);
         return mapToDTO(account);
     }
 
-    public Account proccessAccount(TransactionDTO transactionDTO){
+    @Transactional
+    public Account updateAccountByTransaction(TransactionDTO transactionDTO){
         var account = getAccountById(transactionDTO.getAccountId());
         if(account.getStatus().equals("ARRESTED") || account.getStatus().equals("BLOCKED")){
             throw new RuntimeException("Аккаунт заблокирован");
@@ -51,6 +48,7 @@ public class AccountServiceImpl implements AccountServiceI {
         } else if(transactionDTO.getType().equals("ACCRUAL")){
             account.setBalance(account.getBalance().add(transactionDTO.getAmount()));
         }
+        accountRepository.save(account);
         return account;
     }
 
@@ -71,5 +69,24 @@ public class AccountServiceImpl implements AccountServiceI {
     public Account getAccountById(Long accountId) {
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account с таким id не найден"));
+    }
+
+    @Transactional
+    public void updateCardExist(Long accountId) {
+        var account = getAccountById(accountId);
+        account.setCardExist(true);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void blockAccount(Account account){
+        account.setStatus("BLOCKED");
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void debitMoney(Account account, BigDecimal amount){
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
     }
 }

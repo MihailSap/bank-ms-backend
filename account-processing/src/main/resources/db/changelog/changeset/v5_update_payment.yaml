@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18
+      author: mihail
+      changes:
+        - addColumn:
+            tableName: payment
+            columns:
+              - column:
+                  name: expired
+                  type: BOOLEAN
