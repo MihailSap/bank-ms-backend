@@ -2,6 +2,7 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sapegin.enums.CardStatusEnum;
 
 @Getter
 @Setter
@@ -24,12 +25,13 @@ public class Card {
 
     private String paymentSystem;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CardStatusEnum status;
 
     public Card(Account account, String cardId, String paymentSystem) {
         this.account = account;
         this.cardId = cardId;
         this.paymentSystem = paymentSystem;
-        this.status = "ACTIVE";
+        this.status = CardStatusEnum.ACTIVE;
     }
 }

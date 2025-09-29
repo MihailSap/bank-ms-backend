@@ -2,6 +2,7 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sapegin.enums.AccountStatusEnum;
 
 import java.math.BigDecimal;
 
@@ -30,10 +31,11 @@ public class Account {
 
     private boolean cardExist;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AccountStatusEnum status;
 
     public Account(Long clientId, Long productId, BigDecimal balance,
-                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, String status) {
+                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, AccountStatusEnum status) {
         this.clientId = clientId;
         this.productId = productId;
         this.balance = balance;

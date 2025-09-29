@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.sapegin.dto.PaymentDTO;
 import ru.sapegin.service.impl.PaymentServiceImpl;
@@ -20,9 +23,12 @@ public class KafkaPaymentConsumer {
     private final PaymentServiceImpl paymentService;
 
     @KafkaListener(topics = "client_payments")
-    public void listenClientProducts(String message) throws JsonProcessingException {
+    public void listenClientProducts(
+            @Payload String message,
+            @Header(KafkaHeaders.RECEIVED_KEY) String key
+    ) throws JsonProcessingException {
         var paymentDTO = objectMapper.readValue(message, PaymentDTO.class);
         paymentService.closeCredit(paymentDTO);
-        log.info("LISTENER: Payment: {}", message);
+        log.info("LISTENER: Payment: {}; Key: {}", message, key);
     }
 }

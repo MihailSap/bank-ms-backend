@@ -1,6 +1,8 @@
 package ru.sapegin.dto;
 
 import lombok.*;
+import ru.sapegin.enums.TransactionStatusEnum;
+import ru.sapegin.enums.TransactionTypeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,11 +18,11 @@ public class TransactionDTO {
 
     private Long cardId;
 
-    String type;
+    TransactionTypeEnum type;
 
     BigDecimal amount;
 
-    String status;
+    TransactionStatusEnum status;
 
     LocalDateTime timestamp;
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sapegin.enums.PaymentTypeEnum;
 
 import java.math.BigDecimal;
 
@@ -17,5 +18,5 @@ public class PaymentDTO {
 
     private BigDecimal amount;
 
-    private String type;
+    private PaymentTypeEnum type;
 }

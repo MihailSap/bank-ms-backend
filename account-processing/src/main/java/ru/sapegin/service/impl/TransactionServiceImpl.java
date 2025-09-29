@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.TransactionDTO;
 import ru.sapegin.enums.TransactionStatusEnum;
+import ru.sapegin.enums.TransactionTypeEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.model.Card;
 import ru.sapegin.model.Transaction;
@@ -16,6 +17,7 @@ import ru.sapegin.service.TransactionServiceI;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -43,10 +45,8 @@ public class TransactionServiceImpl implements TransactionServiceI {
         var account = accountService.updateAccountByTransaction(transactionDTO);
         var card = cardService.getCardById(transactionDTO.getCardId());
         var transaction = create(transactionDTO, card, account);
-        var transactionsByCardId = transactionRepository.findByCardId(card.getId());
-        var cnt = cardService.getTransactionsCountByTime(transactionsByCardId, sT, eT);
-        checkTransactionsCount(cnt, account, transaction);
-        if(transactionDTO.getType().equals("ACCRUAL") && account.isRecalc()){
+        checkTransactionsCount(card, account, transaction);
+        if(transactionDTO.getType().equals(TransactionTypeEnum.ACCRUAL) && account.isRecalc()){
             if (paymentService.isPaymentExist(account)) {
                 var creditMoths = 24;
                 paymentService.createCreditPayments(account, creditMoths, transactionDTO.getAmount());
@@ -67,7 +67,9 @@ public class TransactionServiceImpl implements TransactionServiceI {
     }
 
     @Transactional
-    public void checkTransactionsCount(int cnt, Account account, Transaction transaction){
+    public void checkTransactionsCount(Card card, Account account, Transaction transaction){
+        var transactionsByCardId = transactionRepository.findByCardId(card.getId());
+        var cnt = cardService.getTransactionsCountByTime(transactionsByCardId, sT, eT);
         if(cnt > N){
             accountService.blockAccount(account);
             blockTransaction(transaction);
@@ -96,7 +98,7 @@ public class TransactionServiceImpl implements TransactionServiceI {
                 transaction.getAccount().getId(),
                 transaction.getType(),
                 transaction.getAmount(),
-                "ALLOWED",
+                transaction.getStatus(),
                 transaction.getTimestamp()
         );
     }

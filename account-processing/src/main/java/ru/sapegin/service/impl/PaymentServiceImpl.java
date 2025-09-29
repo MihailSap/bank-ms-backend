@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.PaymentDTO;
+import ru.sapegin.enums.PaymentTypeEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.model.Payment;
 import ru.sapegin.repository.PaymentRepository;
@@ -52,7 +53,7 @@ public class PaymentServiceImpl {
             payment.setPaymentDate(startDate.plusMonths(j));
             payment.setAmount(A);
             payment.setCredit(true);
-            payment.setType("MONTHLY_CREDIT_PAYMENT");
+            payment.setType(PaymentTypeEnum.MONTHLY_CREDIT_PAYMENT);
             payments.add(payment);
         }
         return payments;
@@ -81,10 +82,11 @@ public class PaymentServiceImpl {
 
     @Transactional
     public void closeCredit(PaymentDTO paymentDTO){
-        if(paymentDTO.getType().equals("ACCRUAL")) {
+        if(paymentDTO.getType().equals(PaymentTypeEnum.ACCRUAL)) {
             var account = accountService.getAccountById(paymentDTO.getAccountId());
             var unpaidPayments = getUnpaidPayments(account);
             var debtAmount = getDebtAmount(unpaidPayments);
+//            System.out.println("Debt amount is: " + debtAmount);
             if(paymentDTO.getAmount().equals(debtAmount)){
                 accountService.debitMoney(account, debtAmount);
                 closeAllPayments(unpaidPayments);

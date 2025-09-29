@@ -2,21 +2,19 @@ package ru.sapegin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.sapegin.enums.KeyEnum;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProductDTO {
+@NoArgsConstructor
+public class ClientProductKeyDTO {
 
-    private String name;
+    private Long clientId;
 
-    private KeyEnum key;
+    private Long productId;
 
-    private LocalDate createDate;
-
-    private String productId;
+    private KeyEnum keyType;
 }

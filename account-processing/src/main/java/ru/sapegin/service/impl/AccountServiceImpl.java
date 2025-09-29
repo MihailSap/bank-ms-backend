@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.AccountDTO;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.TransactionDTO;
+import ru.sapegin.enums.AccountStatusEnum;
+import ru.sapegin.enums.TransactionTypeEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.repository.AccountRepository;
 import ru.sapegin.service.AccountServiceI;
@@ -28,9 +30,9 @@ public class AccountServiceImpl implements AccountServiceI {
                 accountDTO.productId(),
                 BigDecimal.ZERO,
                 BigDecimal.valueOf(0.01),
-                "CC".equals(accountDTO.key()) || "NS".equals(accountDTO.key()),
+                "CC".equals(accountDTO.keyType()) || "NS".equals(accountDTO.keyType()),
                 false,
-                "ACTIVE"
+                AccountStatusEnum.ACTIVE
         );
         accountRepository.save(account);
         log.info("СОЗДАН Account: {}", account);
@@ -40,12 +42,13 @@ public class AccountServiceImpl implements AccountServiceI {
     @Transactional
     public Account updateAccountByTransaction(TransactionDTO transactionDTO){
         var account = getAccountById(transactionDTO.getAccountId());
-        if(account.getStatus().equals("ARRESTED") || account.getStatus().equals("BLOCKED")){
+        if(account.getStatus().equals(AccountStatusEnum.ARRESTED)
+                || account.getStatus().equals(AccountStatusEnum.BLOCKED)){
             throw new RuntimeException("Аккаунт заблокирован");
         }
-        if(transactionDTO.getType().equals("DEBITING")){
+        if(transactionDTO.getType().equals(TransactionTypeEnum.DEBITING)){
             account.setBalance(account.getBalance().subtract(transactionDTO.getAmount()));
-        } else if(transactionDTO.getType().equals("ACCRUAL")){
+        } else if(transactionDTO.getType().equals(TransactionTypeEnum.ACCRUAL)){
             account.setBalance(account.getBalance().add(transactionDTO.getAmount()));
         }
         accountRepository.save(account);
@@ -80,7 +83,7 @@ public class AccountServiceImpl implements AccountServiceI {
 
     @Transactional
     public void blockAccount(Account account){
-        account.setStatus("BLOCKED");
+        account.setStatus(AccountStatusEnum.BLOCKED);
         accountRepository.save(account);
     }
 

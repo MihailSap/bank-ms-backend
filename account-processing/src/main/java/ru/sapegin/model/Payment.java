@@ -2,6 +2,7 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sapegin.enums.PaymentTypeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,7 +33,8 @@ public class Payment {
 
     private LocalDate payedAt;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private PaymentTypeEnum type;
 
     private boolean expired;
 }

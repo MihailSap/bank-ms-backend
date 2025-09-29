@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.CardDTO;
+import ru.sapegin.enums.AccountStatusEnum;
 import ru.sapegin.model.Card;
 import ru.sapegin.model.Transaction;
 import ru.sapegin.repository.CardRepository;
@@ -28,8 +29,8 @@ public class CardServiceImpl implements CardServiceI {
         var accountId = cardDTO.getAccountId();
         var paymentSystem = cardDTO.getPaymentSystem();
         var account = accountService.getAccountById(accountId);
-        if(account.getStatus().equals("BLOCKED")){
-            throw new RuntimeException("Account status is BLOCKED");
+        if(account.getStatus().equals(AccountStatusEnum.BLOCKED)){
+            throw new RuntimeException("Аккаунт заблокирован, создание карты недоступно");
         }
 
         var card = new Card(
