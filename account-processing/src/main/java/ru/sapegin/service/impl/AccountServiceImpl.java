@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountServiceI {
                 accountDTO.clientId(),
                 accountDTO.productId(),
                 BigDecimal.ZERO,
-                BigDecimal.valueOf(0.01),
+                BigDecimal.valueOf(accountDTO.interestRate()),
                 "CC".equals(accountDTO.keyType()) || "NS".equals(accountDTO.keyType()),
                 false,
                 AccountStatusEnum.ACTIVE

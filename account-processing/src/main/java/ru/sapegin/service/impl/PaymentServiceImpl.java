@@ -86,7 +86,6 @@ public class PaymentServiceImpl {
             var account = accountService.getAccountById(paymentDTO.getAccountId());
             var unpaidPayments = getUnpaidPayments(account);
             var debtAmount = getDebtAmount(unpaidPayments);
-//            System.out.println("Debt amount is: " + debtAmount);
             if(paymentDTO.getAmount().equals(debtAmount)){
                 accountService.debitMoney(account, debtAmount);
                 closeAllPayments(unpaidPayments);

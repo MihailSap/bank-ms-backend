@@ -16,5 +16,7 @@ public class ClientProductKeyDTO {
 
     private Long productId;
 
+    private int interestRate;
+
     private KeyEnum keyType;
 }
