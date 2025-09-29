@@ -12,4 +12,8 @@ public interface TransactionServiceI {
     TransactionDTO proccessGetTransaction(TransactionDTO transactionDTO);
 
     TransactionDTO mapToDTO(Transaction transaction);
+
+    void checkTransactionsCount(Card card, Account account, Transaction transaction);
+
+    void blockTransaction(Transaction transaction);
 }

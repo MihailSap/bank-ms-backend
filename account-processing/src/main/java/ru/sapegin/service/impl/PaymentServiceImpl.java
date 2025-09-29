@@ -9,6 +9,7 @@ import ru.sapegin.enums.PaymentTypeEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.model.Payment;
 import ru.sapegin.repository.PaymentRepository;
+import ru.sapegin.service.PaymentServiceI;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,18 +21,20 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentServiceImpl {
+public class PaymentServiceImpl implements PaymentServiceI {
 
     private final PaymentRepository paymentRepository;
     private final AccountServiceImpl accountService;
 
     @Transactional
+    @Override
     public void createCreditPayments(Account account, int n, BigDecimal creditAmount) {
         var A = getA(creditAmount, account.getInterestRate(), n);
         var payments = getCreditPayments(account, n, A);
         saveCreditPayments(payments);
     }
 
+    @Override
     public BigDecimal getA(BigDecimal S, BigDecimal interestRate, int n){
         var i = interestRate
                 .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP)
@@ -44,6 +47,7 @@ public class PaymentServiceImpl {
         return S.multiply(numerator.divide(denominator, 10, RoundingMode.HALF_UP));
     }
 
+    @Override
     public List<Payment> getCreditPayments(Account account, int n, BigDecimal A){
         List<Payment> payments = new ArrayList<>();
         var startDate = LocalDate.now().plusMonths(1);
@@ -60,11 +64,13 @@ public class PaymentServiceImpl {
     }
 
     @Transactional
+    @Override
     public void saveCreditPayments(List<Payment> payments){
         paymentRepository.saveAll(payments);
         log.info("СОЗДАНО кредитных Payments: {}", payments.size());
     }
 
+    @Override
     public Optional<Payment> getNextCreditPaymentIfExists(Account account){
         var payments = paymentRepository.findByAccountId(account.getId());
         for(var payment : payments){
@@ -76,11 +82,13 @@ public class PaymentServiceImpl {
         return Optional.empty();
     }
 
+    @Override
     public boolean isPaymentExist(Account account){
         return paymentRepository.findByAccountId(account.getId()).isEmpty();
     }
 
     @Transactional
+    @Override
     public void closeCredit(PaymentDTO paymentDTO){
         if(paymentDTO.getType().equals(PaymentTypeEnum.ACCRUAL)) {
             var account = accountService.getAccountById(paymentDTO.getAccountId());
@@ -93,6 +101,7 @@ public class PaymentServiceImpl {
         }
     }
 
+    @Override
     public List<Payment> getUnpaidPayments(Account account){
         return paymentRepository.findByAccountId(account.getId())
                 .stream()
@@ -100,6 +109,7 @@ public class PaymentServiceImpl {
                 .toList();
     }
 
+    @Override
     public BigDecimal getDebtAmount(List<Payment> payments){
         return payments.stream()
                 .map(Payment::getAmount)
@@ -107,6 +117,7 @@ public class PaymentServiceImpl {
     }
 
     @Transactional
+    @Override
     public void closeAllPayments(List<Payment> payments){
         payments.forEach(p -> p.setPayedAt(LocalDate.now()));
         paymentRepository.saveAll(payments);

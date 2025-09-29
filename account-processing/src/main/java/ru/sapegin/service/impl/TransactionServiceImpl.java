@@ -66,6 +66,7 @@ public class TransactionServiceImpl implements TransactionServiceI {
     }
 
     @Transactional
+    @Override
     public void checkTransactionsCount(Card card, Account account, Transaction transaction){
         var transactionsByCardId = transactionRepository.findByCardId(card.getId());
         var cnt = cardService.getTransactionsCountByTime(transactionsByCardId, sT, eT);
@@ -103,6 +104,7 @@ public class TransactionServiceImpl implements TransactionServiceI {
     }
 
     @Transactional
+    @Override
     public void blockTransaction(Transaction transaction){
         transaction.setStatus(TransactionStatusEnum.BLOCKED);
         transactionRepository.save(transaction);

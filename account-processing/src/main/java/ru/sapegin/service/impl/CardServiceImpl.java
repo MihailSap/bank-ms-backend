@@ -97,6 +97,7 @@ public class CardServiceImpl implements CardServiceI {
                 .orElseThrow(() -> new RuntimeException("Card с таким id не найдена"));
     }
 
+    @Override
     public int getTransactionsCountByTime(List<Transaction> transactionsByCardId, int sT, int eT){
         var cnt = 0;
         if(!transactionsByCardId.isEmpty()){

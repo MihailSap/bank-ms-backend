@@ -40,6 +40,7 @@ public class AccountServiceImpl implements AccountServiceI {
     }
 
     @Transactional
+    @Override
     public Account updateAccountByTransaction(TransactionDTO transactionDTO){
         var account = getAccountById(transactionDTO.getAccountId());
         if(account.getStatus().equals(AccountStatusEnum.ARRESTED)
@@ -75,6 +76,7 @@ public class AccountServiceImpl implements AccountServiceI {
     }
 
     @Transactional
+    @Override
     public void updateCardExist(Long accountId) {
         var account = getAccountById(accountId);
         account.setCardExist(true);
@@ -82,12 +84,14 @@ public class AccountServiceImpl implements AccountServiceI {
     }
 
     @Transactional
+    @Override
     public void blockAccount(Account account){
         account.setStatus(AccountStatusEnum.BLOCKED);
         accountRepository.save(account);
     }
 
     @Transactional
+    @Override
     public void debitMoney(Account account, BigDecimal amount){
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
