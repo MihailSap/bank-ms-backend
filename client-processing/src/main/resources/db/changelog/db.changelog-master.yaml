@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v3.1_update_product_create_date.yaml
   - include:
       file: db/changelog/changeset/v3.2_update_product.yaml
+  - include:
+      file: db/changelog/changeset/v6_create_error_log.yaml
