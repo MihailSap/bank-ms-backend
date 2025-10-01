@@ -2,7 +2,7 @@ package ru.sapegin.service;
 
 import ru.sapegin.dto.ErrorLogDTO;
 
-public interface ErrorLogServiceI {
+public interface LogServiceI {
 
     void create(ErrorLogDTO errorLogDTO);
 }

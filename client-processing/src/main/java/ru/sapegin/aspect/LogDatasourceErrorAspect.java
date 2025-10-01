@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ru.sapegin.dto.ErrorLogDTO;
-import ru.sapegin.service.impl.ErrorLogService;
+import ru.sapegin.service.impl.LogServiceImpl;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class LogDatasourceErrorAspect {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private final ErrorLogService errorLogService;
+    private final LogServiceImpl errorLogServiceImpl;
 
     @Pointcut("@annotation(ru.sapegin.aspect.annotation.LogDatasourceError)")
     public void errorMethods(){
@@ -52,7 +52,7 @@ public class LogDatasourceErrorAspect {
             kafkaTemplate.send("service_logs", applicationName, errorLogDTO);
             log.warn("Исключение отправлено в топик service_logs");
         } catch (Exception e){
-            errorLogService.create(errorLogDTO);
+            errorLogServiceImpl.create(errorLogDTO);
             log.warn("Не удалось отправить исключение в топик. Оно было сохранено в БД");
         }
 

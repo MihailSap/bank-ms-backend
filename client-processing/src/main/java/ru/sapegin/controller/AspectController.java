@@ -3,9 +3,9 @@ package ru.sapegin.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.aspect.annotation.HttpIncomeRequestLog;
+import ru.sapegin.aspect.annotation.HttpOutcomeRequestLog;
 import ru.sapegin.aspect.annotation.LogDatasourceError;
 import ru.sapegin.dto.CardDTO;
-import ru.sapegin.dto.UserDTO;
 
 @RestController
 @RequestMapping("/api/aspect")
@@ -22,5 +22,11 @@ public class AspectController {
     @HttpIncomeRequestLog
     public void doSomething(@RequestBody CardDTO cardDTO){
         System.out.println("Hello World" + cardDTO.toString());
+    }
+
+    @GetMapping("/get")
+    @HttpOutcomeRequestLog
+    public CardDTO getCardDTO(){
+        return new CardDTO(1L, "MIR");
     }
 }

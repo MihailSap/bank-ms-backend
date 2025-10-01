@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.sapegin.dto.RequestLogDTO;
+import ru.sapegin.service.impl.LogServiceImpl;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -27,6 +28,8 @@ public class HttpIncomeRequestLogAspect {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    private final LogServiceImpl logService;
+
     @Pointcut("@annotation(ru.sapegin.aspect.annotation.HttpIncomeRequestLog)")
     public void HttpIncomeRequestMethods(){
     }
@@ -38,10 +41,10 @@ public class HttpIncomeRequestLogAspect {
         var methodSignature = joinPoint.getSignature().toString();
         var uri = request.getRequestURI();
         var queryParams = request.getQueryString();
-        var parsedParams = getParsedParams(queryParams);
+        var parsedParams = logService.getParsedParams(queryParams);
         var body = Arrays.toString(joinPoint.getArgs());
-        var requestLogDTO = new RequestLogDTO(timestamp, methodSignature, uri, parsedParams, body);
 
+        var requestLogDTO = new RequestLogDTO(timestamp, methodSignature, uri, parsedParams, body);
         try{
             kafkaTemplate.send("service_logs", applicationName, requestLogDTO);
         } catch (Exception ex){
@@ -50,13 +53,5 @@ public class HttpIncomeRequestLogAspect {
 
         log.info("BEFORE LOG timestamp: {}; method: {}; uri: {}; params: {}; body: {}",
                 timestamp, methodSignature, uri, parsedParams, body);
-    }
-
-    public String getParsedParams(String params){
-        if(params == null){
-            return null;
-        }
-        var a = params.split("&");
-        return Arrays.toString(a);
     }
 }

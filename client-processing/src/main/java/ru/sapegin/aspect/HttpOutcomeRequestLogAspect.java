@@ -1,6 +1,5 @@
 package ru.sapegin.aspect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -8,7 +7,12 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import ru.sapegin.dto.RequestLogDTO;
+import ru.sapegin.service.impl.LogServiceImpl;
 
 import java.time.Instant;
 
@@ -21,14 +25,31 @@ public class HttpOutcomeRequestLogAspect {
     @Value("${spring.application.name}")
     private String applicationName;
 
-    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    private final LogServiceImpl logService;
 
     @Pointcut("@annotation(ru.sapegin.aspect.annotation.HttpOutcomeRequestLog)")
     public void httpOutcomeRequestMethods() {
     }
 
     @AfterReturning(pointcut = "httpOutcomeRequestMethods()", returning = "result")
-    public void logAfter(JoinPoint joinPoint, Object result){
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        var timestamp = Instant.now().toString();
+        var methodSignature = joinPoint.getSignature().toString();
+        var request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        var uri = request.getRequestURI();
+        var queryString = request.getQueryString();
+        var parsedParams = logService.getParsedParams(queryString);
+        var body = logService.getBody(result);
+        var requestLogDTO = new RequestLogDTO(timestamp, methodSignature, uri, parsedParams, body);
+        try{
+            kafkaTemplate.send("service_logs", applicationName, requestLogDTO);
+        } catch (Exception ex){
+            log.warn("Не удалось отправить сообщение в топик");
+        }
 
+        log.info("AFTER RETURNING LOG timestamp: {}; method: {}; uri: {}; params: {}; body: {}",
+                timestamp, methodSignature, uri, parsedParams, body);
     }
 }
