@@ -56,4 +56,12 @@ public class KafkaProducerConfig {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    public NewTopic serviceLogsTopic() {
+        return TopicBuilder.name("service_logs")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }
