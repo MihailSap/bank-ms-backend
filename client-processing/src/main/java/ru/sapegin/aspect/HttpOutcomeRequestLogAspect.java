@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,8 +24,6 @@ public class HttpOutcomeRequestLogAspect {
     @Value("${spring.application.name}")
     private String applicationName;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-
     private final LogServiceImpl logService;
 
     @Pointcut("@annotation(ru.sapegin.aspect.annotation.HttpOutcomeRequestLog)")
@@ -35,20 +32,15 @@ public class HttpOutcomeRequestLogAspect {
 
     @AfterReturning(pointcut = "httpOutcomeRequestMethods()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        var request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         var timestamp = Instant.now().toString();
         var methodSignature = joinPoint.getSignature().toString();
-        var request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         var uri = request.getRequestURI();
         var queryString = request.getQueryString();
         var parsedParams = logService.getParsedParams(queryString);
         var body = logService.getBody(result);
         var requestLogDTO = new RequestLogDTO(timestamp, methodSignature, uri, parsedParams, body);
-        try{
-            kafkaTemplate.send("service_logs", applicationName, requestLogDTO);
-        } catch (Exception ex){
-            log.warn("Не удалось отправить сообщение в топик");
-        }
-
+        logService.sendRequestLog(requestLogDTO, applicationName);
         log.info("AFTER RETURNING LOG timestamp: {}; method: {}; uri: {}; params: {}; body: {}",
                 timestamp, methodSignature, uri, parsedParams, body);
     }

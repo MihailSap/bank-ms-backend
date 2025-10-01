@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "error_logs")
+@Table(name = "error_log")
 public class ErrorLog {
 
     @Id

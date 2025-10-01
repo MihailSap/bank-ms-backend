@@ -4,7 +4,7 @@ databaseChangeLog:
       author: mihail
       changes:
         - createTable:
-            tableName: error_logs
+            tableName: error_log
             columns:
               - column:
                   name: id

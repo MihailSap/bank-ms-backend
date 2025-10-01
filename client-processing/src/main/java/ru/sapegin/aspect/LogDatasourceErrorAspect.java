@@ -3,6 +3,8 @@ package ru.sapegin.aspect;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import ru.sapegin.dto.ErrorLogDTO;
 import ru.sapegin.service.impl.LogServiceImpl;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -40,16 +43,12 @@ public class LogDatasourceErrorAspect {
         var stacktrace = ExceptionUtils.getStackTrace(exception);
         var exceptionMessage = exception.getMessage();
         var methodParams = Arrays.toString(joinPoint.getArgs());
-        var errorLogDTO = new ErrorLogDTO(
-                timestamp,
-                methodSignature,
-                stacktrace,
-                exceptionMessage,
-                methodParams
-        );
+        var errorLogDTO = new ErrorLogDTO(timestamp, methodSignature, stacktrace, exceptionMessage, methodParams);
 
         try{
-            kafkaTemplate.send("service_logs", applicationName, errorLogDTO);
+            var record = new ProducerRecord<String, Object>("service_logs", applicationName, errorLogDTO);
+            record.headers().add(new RecordHeader("type", "ERROR".getBytes(StandardCharsets.UTF_8)));
+            kafkaTemplate.send(record);
             log.warn("Исключение отправлено в топик service_logs");
         } catch (Exception e){
             errorLogServiceImpl.create(errorLogDTO);

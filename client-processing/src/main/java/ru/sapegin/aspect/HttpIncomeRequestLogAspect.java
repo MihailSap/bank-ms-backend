@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -15,7 +14,6 @@ import ru.sapegin.dto.RequestLogDTO;
 import ru.sapegin.service.impl.LogServiceImpl;
 
 import java.time.Instant;
-import java.util.Arrays;
 
 @Slf4j
 @Aspect
@@ -25,8 +23,6 @@ public class HttpIncomeRequestLogAspect {
 
     @Value("${spring.application.name}")
     private String applicationName;
-
-    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final LogServiceImpl logService;
 
@@ -42,15 +38,9 @@ public class HttpIncomeRequestLogAspect {
         var uri = request.getRequestURI();
         var queryParams = request.getQueryString();
         var parsedParams = logService.getParsedParams(queryParams);
-        var body = Arrays.toString(joinPoint.getArgs());
-
+        var body = logService.getBody(joinPoint.getArgs());
         var requestLogDTO = new RequestLogDTO(timestamp, methodSignature, uri, parsedParams, body);
-        try{
-            kafkaTemplate.send("service_logs", applicationName, requestLogDTO);
-        } catch (Exception ex){
-            log.warn("Не удалось отправить сообщение в топик");
-        }
-
+        logService.sendRequestLog(requestLogDTO, applicationName);
         log.info("BEFORE LOG timestamp: {}; method: {}; uri: {}; params: {}; body: {}",
                 timestamp, methodSignature, uri, parsedParams, body);
     }
