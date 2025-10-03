@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.sapegin.aspect.annotation.HttpIncomeRequestLog;
 import ru.sapegin.aspect.annotation.HttpOutcomeRequestLog;
 import ru.sapegin.aspect.annotation.LogDatasourceError;
+import ru.sapegin.aspect.annotation.Metric;
 import ru.sapegin.dto.CardDTO;
 
 @Slf4j
@@ -30,5 +31,12 @@ public class AspectExampleController {
     @HttpOutcomeRequestLog
     public CardDTO testHttpOutcomeRequestLog(){
         return new CardDTO(1L, "-");
+    }
+
+    @GetMapping("/hello")
+    @Metric
+    public String testMetric() throws InterruptedException {
+        Thread.sleep(1000);
+        return "Hello";
     }
 }
