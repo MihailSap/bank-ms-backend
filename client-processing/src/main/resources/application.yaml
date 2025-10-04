@@ -27,5 +27,7 @@ spring:
 server:
   port: 8082
 
-time-limit: 100
-cache-time-limit: 10000
+limit:
+  time:
+    method-execution: 100
+    cache-storage: 10000

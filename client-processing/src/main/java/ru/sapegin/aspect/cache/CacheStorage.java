@@ -1,4 +1,4 @@
-package ru.sapegin.aspect.utils;
+package ru.sapegin.aspect.cache;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class CacheStorage<K, V> {
 
-    @Value("${cache-time-limit}")
+    @Value("${limit.time.cache-storage}")
     private Long cacheTimeLimit;
 
     private final Map<K, CacheEntry<V>> storage = new ConcurrentHashMap<>();

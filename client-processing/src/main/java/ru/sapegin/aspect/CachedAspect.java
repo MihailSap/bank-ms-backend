@@ -9,8 +9,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import ru.sapegin.aspect.annotation.Cached;
-import ru.sapegin.aspect.utils.CacheEntry;
-import ru.sapegin.aspect.utils.CacheStorage;
+import ru.sapegin.aspect.cache.CacheEntry;
+import ru.sapegin.aspect.cache.CacheStorage;
 
 import java.util.Arrays;
 
@@ -27,7 +27,7 @@ public class CachedAspect {
     }
 
     @Around("cachedMethods()")
-    public Object getFromCache(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object processCache(ProceedingJoinPoint joinPoint) throws Throwable {
         var signature = (MethodSignature) joinPoint.getSignature();
         var annotation = signature.getMethod().getAnnotation(Cached.class);
 
@@ -41,7 +41,7 @@ public class CachedAspect {
 
         var result = cacheStorage.get(key);
         if(result == null){
-            log.info("Объекта с ключом {} нет в кэше", key);
+            log.info("Объект с ключом {} отсутствует в кэше", key);
             result = joinPoint.proceed();
             cacheStorage.put(key, new CacheEntry<>(result, System.currentTimeMillis()));
         } else {

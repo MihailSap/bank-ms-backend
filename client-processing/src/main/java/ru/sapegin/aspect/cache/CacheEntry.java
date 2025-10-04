@@ -1,4 +1,4 @@
-package ru.sapegin.aspect.utils;
+package ru.sapegin.aspect.cache;
 
 import lombok.Getter;
 

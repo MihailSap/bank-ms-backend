@@ -20,13 +20,13 @@ import ru.sapegin.dto.MetricDTO;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class MetricAspect {
 
-    @Value("${time-limit}")
-    private Long timeLimit;
+    @Value("${limit.time.method-execution}")
+    private Long methodExecutionTimeLimit;
 
     @Value("${spring.application.name}")
     private String applicationName;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final ObjectMapper objectMapper;
 
@@ -38,19 +38,21 @@ public class MetricAspect {
     public Object checkExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         var methodSignature = joinPoint.getSignature().toString();
         var args = objectMapper.writeValueAsString(joinPoint.getArgs());
+
         var timeBeforeExecution = System.currentTimeMillis();
         var result = joinPoint.proceed();
         var timeAfterExecution = System.currentTimeMillis();
         var executionTime = timeAfterExecution - timeBeforeExecution;
+
         var metricDTO = new MetricDTO(methodSignature, executionTime, args);
         var metricStringDTO = objectMapper.writeValueAsString(metricDTO);
-        if(executionTime > timeLimit){
-            ProducerRecord<String, String> producerRecord = new ProducerRecord<>("service_logs", applicationName, metricStringDTO);
+        if(executionTime > methodExecutionTimeLimit){
+            ProducerRecord<String, Object> producerRecord = new ProducerRecord<>("service_logs", applicationName, metricStringDTO);
             producerRecord.headers().add("type", "WARNING".getBytes());
             kafkaTemplate.send(producerRecord);
-            log.warn("Время выполнения {}: {}, что превышает лимит в {}", methodSignature, executionTime, timeLimit);
+            log.warn("Время выполнения {}: {} мс, что превышает лимит в {} мс", methodSignature, executionTime, methodExecutionTimeLimit);
         } else {
-            log.info("Время выполнения метода: {} МС", executionTime);
+            log.info("Время выполнения метода: {} мс", executionTime);
         }
         return result;
     }
