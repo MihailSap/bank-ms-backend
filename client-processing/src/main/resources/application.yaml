@@ -28,3 +28,4 @@ server:
   port: 8082
 
 time-limit: 100
+cache-time-limit: 10000
