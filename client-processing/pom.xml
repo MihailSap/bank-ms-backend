@@ -57,6 +57,11 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ru.sapegin</groupId>
+            <artifactId>bank-aspects</artifactId>
+            <version>0.0.32</version>
+        </dependency>
     </dependencies>
 
     <build>

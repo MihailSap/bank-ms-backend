@@ -18,6 +18,7 @@ public class ClientUserController {
     private final ClientServiceImpl clientService;
     private final UserServiceImpl userService;
 
+
     @PostMapping("/register")
     public UserDTO register(@RequestBody RegistrationDTO registrationDTO){
         var user = userService.create(registrationDTO.userDTO());
@@ -32,7 +33,7 @@ public class ClientUserController {
         return clientService.mapToDTO(client);
     }
 
-    @Cached
+    @Cached(cacheByPrimaryKey = true)
     @GetMapping("/search")
     public UserDTO getUserByRequestParams(@RequestParam String login){
         var user = userService.getUserByLogin(login);

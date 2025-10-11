@@ -35,7 +35,7 @@ public class AspectExampleController {
 
     @GetMapping("/hello")
     @Metric
-    public String testMetric(@RequestParam String a) throws InterruptedException {
+    public String testMetric() throws InterruptedException {
         Thread.sleep(1000);
         return "Hello";
     }
