@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.ClientProductKeyDTO;
 import ru.sapegin.kafka.KafkaProducerService;
 

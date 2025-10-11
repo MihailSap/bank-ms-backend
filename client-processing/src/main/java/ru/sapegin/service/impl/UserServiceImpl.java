@@ -3,6 +3,7 @@ package ru.sapegin.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.UserDTO;
@@ -17,11 +18,13 @@ public class UserServiceImpl implements UserServiceI {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Transactional
     @Override
     public User create(UserDTO userDTO) {
         checkUnique(userDTO);
-        var user = new User(userDTO.login(), userDTO.password(), userDTO.email());
+        var user = new User(userDTO.login(), passwordEncoder.encode(userDTO.password()), userDTO.email());
         userRepository.save(user);
         log.info("СОЗДАН User: {}", user);
         return user;

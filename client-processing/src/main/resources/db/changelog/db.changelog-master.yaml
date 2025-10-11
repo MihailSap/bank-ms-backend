@@ -15,3 +15,7 @@ databaseChangeLog:
       file: db/changelog/changeset/v3.2_update_product.yaml
   - include:
       file: db/changelog/changeset/v6_create_error_log.yaml
+  - include:
+      file: db/changelog/changeset/v7_update_user.yaml
+  - include:
+      file: db/changelog/changeset/v8_update_user_password.yaml
