@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.sapegin.enums.Role;
+import ru.sapegin.enums.TokenType;
+import ru.sapegin.service.impl.JwtTokenServiceImpl;
 
 import java.io.IOException;
 
 @Slf4j
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-
-    private static final String AUTHORIZATION = "Authorization";
 
     private final JwtTokenServiceImpl jwtTokenServiceImpl;
 
@@ -31,8 +31,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getTokenFromRequest(request);
-        if (token != null && jwtTokenServiceImpl.validateToken(token)) {
-            Claims claims = jwtTokenServiceImpl.getAccessClaims(token);
+        if (token != null && jwtTokenServiceImpl.validateToken(token, TokenType.ACCESS)) {
+            Claims claims = jwtTokenServiceImpl.getClaims(token, TokenType.ACCESS);
             JwtAuthentication jwtInfoToken = getJwtAuthentication(claims);
             jwtInfoToken.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
@@ -41,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
-        final String bearer = request.getHeader(AUTHORIZATION);
+        final String bearer = request.getHeader("Authorization");
         if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
@@ -50,7 +50,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     public JwtAuthentication getJwtAuthentication(Claims claims) {
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
-        jwtInfoToken.setRole(Role.USER);
+        jwtInfoToken.setRole(Role.CURRENT_CLIENT);
         jwtInfoToken.setLogin(claims.getSubject());
         return jwtInfoToken;
     }

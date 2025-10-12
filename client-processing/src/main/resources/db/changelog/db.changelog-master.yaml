@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v7_update_user.yaml
   - include:
       file: db/changelog/changeset/v8_update_user_password.yaml
+  - include:
+      file: db/changelog/changeset/v9_create_refresh_token.yaml

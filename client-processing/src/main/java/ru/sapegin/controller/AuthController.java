@@ -2,13 +2,14 @@ package ru.sapegin.controller;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sapegin.dto.AuthRequest;
 import ru.sapegin.dto.AuthResponse;
-import ru.sapegin.jwt.JwtAuthServiceImpl;
+import ru.sapegin.service.impl.JwtAuthServiceImpl;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,5 +21,21 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) throws AuthException {
         return jwtAuthServiceImpl.login(authRequest);
+    }
+
+    @PostMapping("/token")
+    public AuthResponse getNewAccessToken(@RequestBody AuthResponse auth) {
+        return jwtAuthServiceImpl.getAccessToken(auth.refreshToken());
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse getNewRefreshToken(@RequestBody AuthResponse auth) throws AuthException {
+        return jwtAuthServiceImpl.refresh(auth.refreshToken());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> deleteRefreshToken(@RequestBody AuthResponse request) throws AuthException {
+        jwtAuthServiceImpl.logout(request.refreshToken());
+        return ResponseEntity.ok().build();
     }
 }

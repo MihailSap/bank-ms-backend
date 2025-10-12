@@ -24,6 +24,9 @@ public class User {
 
     private String role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RefreshToken refreshToken;
+
     public User(String login, String password, String email) {
         this.login = login;
         this.password = password;

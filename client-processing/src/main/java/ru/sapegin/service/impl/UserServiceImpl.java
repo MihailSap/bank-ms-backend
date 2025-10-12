@@ -1,24 +1,28 @@
 package ru.sapegin.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.UserDTO;
+import ru.sapegin.model.RefreshToken;
 import ru.sapegin.model.User;
 import ru.sapegin.repository.UserRepository;
 import ru.sapegin.service.UserServiceI;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserServiceImpl implements UserServiceI {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Transactional
     @Override
@@ -61,5 +65,15 @@ public class UserServiceImpl implements UserServiceI {
 
     public User getUserByLogin(String login) {
         return userRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("User с таким login не найден"));
+    }
+
+    @Transactional
+    public void updateRefreshToken(User user, String refreshTokenBody){
+        if (user.getRefreshToken() != null) {
+            user.getRefreshToken().setBody(refreshTokenBody);
+        } else {
+            user.setRefreshToken(new RefreshToken(refreshTokenBody, user));
+        }
+        userRepository.save(user);
     }
 }
