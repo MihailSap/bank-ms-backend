@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.UserDTO;
+import ru.sapegin.enums.Role;
 import ru.sapegin.model.RefreshToken;
 import ru.sapegin.model.User;
 import ru.sapegin.repository.UserRepository;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserServiceI {
     public User create(UserDTO userDTO) {
         checkUnique(userDTO);
         var user = new User(userDTO.login(), passwordEncoder.encode(userDTO.password()), userDTO.email());
+        user.setRole(Role.CURRENT_CLIENT);
         userRepository.save(user);
         log.info("СОЗДАН User: {}", user);
         return user;
