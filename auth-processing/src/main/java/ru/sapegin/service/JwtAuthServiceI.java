@@ -8,8 +8,6 @@ public interface JwtAuthServiceI {
 
     AuthResponse login(AuthRequest authRequest) throws AuthException;
 
-    AuthResponse getAccessToken(String refreshToken);
-
     AuthResponse refresh(String refreshToken) throws AuthException;
 
     void logout(String refreshToken);

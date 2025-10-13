@@ -12,7 +12,7 @@ public interface JwtTokenServiceI {
 
     String getRefreshToken(User user);
 
-    boolean validateToken(String token, TokenType tokenType);
+    boolean validateRefreshToken(String token, TokenType tokenType);
 
     Claims getClaims(String token, TokenType tokenType);
 

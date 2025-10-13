@@ -48,31 +48,12 @@ public class JwtAuthServiceImpl implements JwtAuthServiceI {
     }
 
     @Override
-    public AuthResponse getAccessToken(String refreshToken) {
-        if(tokenBlacklistService.contains(refreshToken)){
-            throw new RuntimeException("Токен находится в чёрном списке");
-        }
-
-        if (jwtTokenService.validateToken(refreshToken, TokenType.REFRESH)) {
-            Claims claims = jwtTokenService.getClaims(refreshToken, TokenType.REFRESH);
-            String login = claims.getSubject();
-            User user = userService.getUserByLogin(login);
-            var saveRefreshToken = refreshTokenService.getByUser(user).getBody();
-            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                String accessToken = jwtTokenService.getAccessToken(user);
-                return new AuthResponse(accessToken, null);
-            }
-        }
-        return new AuthResponse(null, null);
-    }
-
-    @Override
     public AuthResponse refresh(String refreshToken) throws AuthException {
         if(tokenBlacklistService.contains(refreshToken)){
             throw new RuntimeException("Токен находится в чёрном списке");
         }
 
-        if (jwtTokenService.validateToken(refreshToken, TokenType.REFRESH)) {
+        if (jwtTokenService.validateRefreshToken(refreshToken, TokenType.REFRESH)) {
             Claims claims = jwtTokenService.getClaims(refreshToken, TokenType.REFRESH);
             String login = claims.getSubject();
             User user = userService.getUserByLogin(login);

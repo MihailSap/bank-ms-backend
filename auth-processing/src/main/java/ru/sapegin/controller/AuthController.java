@@ -2,7 +2,6 @@ package ru.sapegin.controller;
 
 import jakarta.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.AuthRequest;
 import ru.sapegin.dto.AuthResponse;
@@ -30,14 +29,9 @@ public class AuthController {
         return userServiceImpl.mapToDTO(user);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/sign-up")
     public AuthResponse login(@RequestBody AuthRequest authRequest) throws AuthException {
         return jwtAuthServiceImpl.login(authRequest);
-    }
-
-    @PostMapping("/token")
-    public AuthResponse getNewAccessToken(@RequestBody AuthResponse auth) {
-        return jwtAuthServiceImpl.getAccessToken(auth.refreshToken());
     }
 
     @PostMapping("/refresh")
@@ -46,8 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> deleteRefreshToken(@RequestBody AuthResponse request) throws AuthException {
+    public void deleteRefreshToken(@RequestBody AuthResponse request) {
         jwtAuthServiceImpl.logout(request.refreshToken());
-        return ResponseEntity.ok().build();
     }
 }

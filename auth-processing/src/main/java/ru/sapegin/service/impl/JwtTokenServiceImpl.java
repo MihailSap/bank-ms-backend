@@ -56,7 +56,7 @@ public class JwtTokenServiceImpl implements JwtTokenServiceI {
     }
 
     @Override
-    public boolean validateToken(String token, TokenType tokenType) {
+    public boolean validateRefreshToken(String token, TokenType tokenType) {
         Key secretKey = getSecretKey(tokenType);
         try{
             Jwts.parserBuilder()
