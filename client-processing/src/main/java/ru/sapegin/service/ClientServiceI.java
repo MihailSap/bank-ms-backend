@@ -3,11 +3,10 @@ package ru.sapegin.service;
 import ru.sapegin.dto.ClientDTO;
 import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.model.Client;
-import ru.sapegin.model.User;
 
 public interface ClientServiceI {
 
-    void create(ClientDTO clientDTO, User user);
+    void create(ClientDTO clientDTO, Long userId);
 
     boolean existsInBlacklist(ClientDTO clientDTO);
 
@@ -15,5 +14,5 @@ public interface ClientServiceI {
 
     ClientFastDTO mapToDTO(Client client);
 
-    Client mapFromDTO(ClientDTO clientDTO, String clientId, User user);
+    Client mapFromDTO(ClientDTO clientDTO, String clientId, Long userId);
 }

@@ -2,6 +2,7 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sapegin.enums.Role;
 
 @Getter
 @Setter
@@ -21,6 +22,11 @@ public class User {
     private String password;
 
     private String email;
+
+    private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RefreshToken refreshToken;
 
     public User(String login, String password, String email) {
         this.login = login;

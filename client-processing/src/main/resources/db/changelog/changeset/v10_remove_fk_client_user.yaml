@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 43
+      author: mihail
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: client
+            constraintName: fk_client_user
