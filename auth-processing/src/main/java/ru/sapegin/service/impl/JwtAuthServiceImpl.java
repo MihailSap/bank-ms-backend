@@ -1,6 +1,5 @@
 package ru.sapegin.service.impl;
 
-
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +19,18 @@ public class JwtAuthServiceImpl implements JwtAuthServiceI {
     private final UserServiceImpl userService;
     private final JwtTokenServiceImpl jwtTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final TokenBlacklistServiceImpl tokenBlacklistService;
 
     @Autowired
     public JwtAuthServiceImpl(UserServiceImpl userService,
                               JwtTokenServiceImpl jwtTokenService,
                               PasswordEncoder passwordEncoder,
-                              RefreshTokenServiceImpl refreshTokenService) {
+                              RefreshTokenServiceImpl refreshTokenService, TokenBlacklistServiceImpl tokenBlacklistService) {
         this.userService = userService;
         this.jwtTokenService = jwtTokenService;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Transactional
@@ -48,6 +49,10 @@ public class JwtAuthServiceImpl implements JwtAuthServiceI {
 
     @Override
     public AuthResponse getAccessToken(String refreshToken) {
+        if(tokenBlacklistService.contains(refreshToken)){
+            throw new RuntimeException("Токен находится в чёрном списке");
+        }
+
         if (jwtTokenService.validateToken(refreshToken, TokenType.REFRESH)) {
             Claims claims = jwtTokenService.getClaims(refreshToken, TokenType.REFRESH);
             String login = claims.getSubject();
@@ -63,6 +68,10 @@ public class JwtAuthServiceImpl implements JwtAuthServiceI {
 
     @Override
     public AuthResponse refresh(String refreshToken) throws AuthException {
+        if(tokenBlacklistService.contains(refreshToken)){
+            throw new RuntimeException("Токен находится в чёрном списке");
+        }
+
         if (jwtTokenService.validateToken(refreshToken, TokenType.REFRESH)) {
             Claims claims = jwtTokenService.getClaims(refreshToken, TokenType.REFRESH);
             String login = claims.getSubject();
