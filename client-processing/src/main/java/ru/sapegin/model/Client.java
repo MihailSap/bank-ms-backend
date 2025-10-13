@@ -22,9 +22,7 @@ public class Client {
 
     private String clientId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long userId;
 
     private String firstName;
 
@@ -44,11 +42,11 @@ public class Client {
 
     private String documentSuffix;
 
-    public Client(String clientId, User user, String firstName,
+    public Client(String clientId, Long userId, String firstName,
                   String middleName, String lastName, LocalDate dateOfBirth,
                   DocumentTypeEnum documentType, Long documentId, String documentPrefix, String documentSuffix) {
         this.clientId = clientId;
-        this.user = user;
+        this.userId = userId;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -58,5 +56,4 @@ public class Client {
         this.documentPrefix = documentPrefix;
         this.documentSuffix = documentSuffix;
     }
-
 }

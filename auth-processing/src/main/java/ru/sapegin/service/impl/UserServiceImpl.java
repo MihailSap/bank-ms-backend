@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserServiceI {
 
     @Override
     public UserDTO mapToDTO(User user) {
-        return new UserDTO(user.getLogin(), user.getPassword(), user.getEmail());
+        return new UserDTO(user.getId(), user.getLogin(), null, user.getEmail());
     }
 
     public User getUserByLogin(String login) {

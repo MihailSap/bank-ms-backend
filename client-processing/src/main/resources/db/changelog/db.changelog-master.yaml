@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v8_update_user_password.yaml
   - include:
       file: db/changelog/changeset/v9_create_refresh_token.yaml
+  - include:
+      file: db/changelog/changeset/v10_remove_fk_client_user.yaml

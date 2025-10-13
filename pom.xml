@@ -21,6 +21,7 @@
     <module>account-processing</module>
     <module>client-processing</module>
     <module>credit-processing</module>
+      <module>auth-processing</module>
   </modules>
 
   <properties>
