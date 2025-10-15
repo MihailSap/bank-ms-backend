@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CardServiceI {
 
-    CardDTO create(CardDTO cardDTO);
+    Card create(CardDTO cardDTO);
 
     String generateCardId(String paymentSystem);
 
