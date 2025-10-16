@@ -20,7 +20,7 @@ public class ProductRegistryServiceImpl implements ProductRegistryServiceI {
 
     @Transactional
     @Override
-    public void create(ClientProductDTO clientProductDTO) {
+    public ProductRegistry create(ClientProductDTO clientProductDTO) {
         var productRegistry = new ProductRegistry();
         productRegistry.setProductId(clientProductDTO.productId());
         productRegistry.setAccountId(0L);
@@ -29,5 +29,6 @@ public class ProductRegistryServiceImpl implements ProductRegistryServiceI {
         productRegistry.setOpenDate(LocalDate.now());
         productRegistryRepository.save(productRegistry);
         log.info("СОЗДАН ProductRegistry: {}", productRegistry);
+        return productRegistry;
     }
 }

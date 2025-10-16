@@ -1,8 +1,9 @@
 package ru.sapegin.service;
 
 import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.model.ProductRegistry;
 
 public interface ProductRegistryServiceI {
 
-    void create(ClientProductDTO clientProductDTO);
+    ProductRegistry create(ClientProductDTO clientProductDTO);
 }
