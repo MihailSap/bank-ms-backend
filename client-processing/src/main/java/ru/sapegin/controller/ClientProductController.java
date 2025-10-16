@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.ClientProductFullDTO;
+import ru.sapegin.model.ClientProduct;
 import ru.sapegin.service.impl.ClientProductServiceImpl;
 
 @RestController
@@ -15,6 +16,7 @@ public class ClientProductController {
 
     @PostMapping("/create-credit")
     public ClientProductFullDTO createClientCredit(@RequestBody ClientProductDTO clientProductDTO){
-        return clientProductService.create(clientProductDTO);
+        ClientProduct clientProduct = clientProductService.create(clientProductDTO);
+        return clientProductService.mapToFullDTO(clientProduct);
     }
 }

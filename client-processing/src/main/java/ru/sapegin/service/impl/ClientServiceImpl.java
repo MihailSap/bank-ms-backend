@@ -24,7 +24,7 @@ public class ClientServiceImpl implements ClientServiceI {
 
     @Transactional
     @Override
-    public void create(ClientDTO clientDTO, Long userId) {
+    public Client create(ClientDTO clientDTO, Long userId) {
         if(existsInBlacklist(clientDTO)){
             throw new RuntimeException("Клиент находится в чёрном списке");
         }
@@ -37,6 +37,7 @@ public class ClientServiceImpl implements ClientServiceI {
         var client = mapFromDTO(clientDTO, clientId, userId);
         clientRepository.save(client);
         log.info("СОЗДАН Client: {}", client);
+        return client;
     }
 
     @Override

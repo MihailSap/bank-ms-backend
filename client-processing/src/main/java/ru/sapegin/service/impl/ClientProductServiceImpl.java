@@ -24,7 +24,7 @@ public class ClientProductServiceImpl implements ClientProductServiceI {
 
     @Transactional
     @Override
-    public ClientProductFullDTO create(ClientProductDTO clientProductDTO) {
+    public ClientProduct create(ClientProductDTO clientProductDTO) {
         var client = clientService.getClientById(clientProductDTO.clientId());
         var product = productService.getProductById(clientProductDTO.productId());
         var clientProduct = new ClientProduct();
@@ -34,7 +34,7 @@ public class ClientProductServiceImpl implements ClientProductServiceI {
         clientProduct.setStatus(StatusEnum.ACTIVE);
         clientProductRepository.save(clientProduct);
         log.info("СОЗДАН ClientProduct: {}", clientProduct);
-        return mapToFullDTO(clientProduct);
+        return clientProduct;
     }
 
     @Override

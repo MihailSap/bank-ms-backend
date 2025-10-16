@@ -6,7 +6,7 @@ import ru.sapegin.model.Client;
 
 public interface ClientServiceI {
 
-    void create(ClientDTO clientDTO, Long userId);
+    Client create(ClientDTO clientDTO, Long userId);
 
     boolean existsInBlacklist(ClientDTO clientDTO);
 

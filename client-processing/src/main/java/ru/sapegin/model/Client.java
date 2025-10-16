@@ -6,6 +6,7 @@ import lombok.*;
 import ru.sapegin.enums.DocumentTypeEnum;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -55,5 +56,18 @@ public class Client {
         this.documentId = documentId;
         this.documentPrefix = documentPrefix;
         this.documentSuffix = documentSuffix;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(id, client.id) && Objects.equals(clientId, client.clientId) && Objects.equals(userId, client.userId) && Objects.equals(firstName, client.firstName) && Objects.equals(middleName, client.middleName) && Objects.equals(lastName, client.lastName) && Objects.equals(dateOfBirth, client.dateOfBirth) && documentType == client.documentType && Objects.equals(documentId, client.documentId) && Objects.equals(documentPrefix, client.documentPrefix) && Objects.equals(documentSuffix, client.documentSuffix);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, clientId, userId, firstName, middleName, lastName, dateOfBirth, documentType, documentId, documentPrefix, documentSuffix);
     }
 }
