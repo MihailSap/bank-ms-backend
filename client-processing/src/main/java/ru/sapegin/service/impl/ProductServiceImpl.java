@@ -21,23 +21,23 @@ public class ProductServiceImpl implements ProductServiceI {
 
     @Transactional
     @Override
-    public ProductDTO create(ProductDTO productDTO) {
+    public Product create(ProductDTO productDTO) {
         var product = new Product(productDTO.getName(), productDTO.getKey(), LocalDate.now());
         productRepository.save(product);
         log.info("СОЗДАН Product: {}", product);
-        return mapToProductDTO(product);
+        return product;
     }
 
     @Transactional
     @Override
-    public ProductDTO update(Long id, ProductDTO productDTO) {
+    public Product update(Long id, ProductDTO productDTO) {
         var product = getProductById(id);
         product.setName(productDTO.getName());
         product.setKey(productDTO.getKey());
         product.setProductId(String.format("%s%d", productDTO.getKey(), id));
         productRepository.save(product);
         log.info("ОБНОВЛЕН Product: {}", product);
-        return mapToProductDTO(product);
+        return product;
     }
 
     @Transactional
@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductServiceI {
     }
 
     @Override
-    public ProductDTO mapToProductDTO(Product product) {
+    public ProductDTO mapToDTO(Product product) {
         return new ProductDTO(product.getName(), product.getKey(),
                 product.getCreateDate(), product.getProductId());
     }

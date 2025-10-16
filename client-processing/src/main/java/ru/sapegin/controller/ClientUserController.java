@@ -16,8 +16,8 @@ import ru.sapegin.service.impl.ClientServiceImpl;
 public class ClientUserController {
 
     private final ClientServiceImpl clientService;
-    private final RestTemplate restTemplate;
 
+    private final RestTemplate restTemplate;
 
     @PostMapping("/register")
     public UserDTO register(@RequestBody RegistrationDTO registrationDTO){

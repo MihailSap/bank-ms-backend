@@ -24,7 +24,7 @@ public class AccountServiceImpl implements AccountServiceI {
 
     @Transactional
     @Override
-    public AccountDTO create(ClientProductDTO accountDTO) {
+    public Account create(ClientProductDTO accountDTO) {
         var account = new Account(
                 accountDTO.clientId(),
                 accountDTO.productId(),
@@ -36,7 +36,7 @@ public class AccountServiceImpl implements AccountServiceI {
         );
         accountRepository.save(account);
         log.info("СОЗДАН Account: {}", account);
-        return mapToDTO(account);
+        return account;
     }
 
     @Transactional
@@ -48,11 +48,11 @@ public class AccountServiceImpl implements AccountServiceI {
             throw new RuntimeException("Аккаунт заблокирован");
         }
         if(transactionDTO.getType().equals(TransactionTypeEnum.DEBITING)){
-            account.setBalance(account.getBalance().subtract(transactionDTO.getAmount()));
+            debitMoney(account, transactionDTO.getAmount());
         } else if(transactionDTO.getType().equals(TransactionTypeEnum.ACCRUAL)){
-            account.setBalance(account.getBalance().add(transactionDTO.getAmount()));
+            accrualMoney(account, transactionDTO.getAmount());
         }
-        accountRepository.save(account);
+        //accountRepository.save(account);
         return account;
     }
 
@@ -77,10 +77,10 @@ public class AccountServiceImpl implements AccountServiceI {
 
     @Transactional
     @Override
-    public void updateCardExist(Long accountId) {
+    public Account updateCardExist(Long accountId) {
         var account = getAccountById(accountId);
         account.setCardExist(true);
-        accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
     @Transactional
@@ -94,6 +94,13 @@ public class AccountServiceImpl implements AccountServiceI {
     @Override
     public void debitMoney(Account account, BigDecimal amount){
         account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    @Override
+    public void accrualMoney(Account account , BigDecimal amount){
+        account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
     }
 }

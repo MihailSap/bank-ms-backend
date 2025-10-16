@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.sapegin.dto.CardDTO;
+import ru.sapegin.model.Card;
 import ru.sapegin.service.impl.CardServiceImpl;
 
 @Getter
@@ -22,7 +23,8 @@ public class KafkaCardConsumer {
     @KafkaListener(topics = "client_cards")
     public void createCard(String message) throws JsonProcessingException {
         var cardDTO = objectMapper.readValue(message, CardDTO.class);
-        var newCardDTO = cardService.create(cardDTO);
+        Card newCard = cardService.create(cardDTO);
+        CardDTO newCardDTO = cardService.mapToDTO(newCard);
         log.info("LISTENER Card: {}", newCardDTO);
     }
 }

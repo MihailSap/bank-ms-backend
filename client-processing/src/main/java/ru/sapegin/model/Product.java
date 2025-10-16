@@ -6,6 +6,7 @@ import lombok.*;
 import ru.sapegin.enums.KeyEnum;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -40,5 +41,18 @@ public class Product {
         if (this.productId == null) {
             this.productId = String.format("%s%d", this.key, this.id);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && key == product.key && Objects.equals(createDate, product.createDate) && Objects.equals(productId, product.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, key, createDate, productId);
     }
 }

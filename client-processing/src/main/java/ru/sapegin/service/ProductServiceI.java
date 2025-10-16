@@ -5,13 +5,13 @@ import ru.sapegin.model.Product;
 
 public interface ProductServiceI {
 
-    ProductDTO create(ProductDTO productDTO);
+    Product create(ProductDTO productDTO);
 
-    ProductDTO update(Long id, ProductDTO productDTO);
+    Product update(Long id, ProductDTO productDTO);
 
     void delete(Long id);
 
     Product getProductById(Long id);
 
-    ProductDTO mapToProductDTO(Product product);
+    ProductDTO mapToDTO(Product product);
 }

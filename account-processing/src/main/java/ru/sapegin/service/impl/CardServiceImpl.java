@@ -25,7 +25,7 @@ public class CardServiceImpl implements CardServiceI {
 
     @Transactional
     @Override
-    public CardDTO create(CardDTO cardDTO) {
+    public Card create(CardDTO cardDTO) {
         var accountId = cardDTO.getAccountId();
         var paymentSystem = cardDTO.getPaymentSystem();
         var account = accountService.getAccountById(accountId);
@@ -42,7 +42,7 @@ public class CardServiceImpl implements CardServiceI {
         cardRepository.save(card);
         log.info("СОЗДАНА Card: {}", card);
         accountService.updateCardExist(accountId);
-        return mapToDTO(card);
+        return card;
     }
 
     @Override

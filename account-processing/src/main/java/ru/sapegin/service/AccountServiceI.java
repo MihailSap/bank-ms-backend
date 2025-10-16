@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public interface AccountServiceI {
 
-    AccountDTO create(ClientProductDTO accountDTO);
+    Account create(ClientProductDTO accountDTO);
 
     Account updateAccountByTransaction(TransactionDTO transactionDTO);
 
@@ -17,9 +17,11 @@ public interface AccountServiceI {
 
     Account getAccountById(Long accountId);
 
-    void updateCardExist(Long accountId);
+    Account updateCardExist(Long accountId);
 
     void blockAccount(Account account);
 
     void debitMoney(Account account, BigDecimal amount);
+
+    void accrualMoney(Account account , BigDecimal amount);
 }
