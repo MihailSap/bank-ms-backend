@@ -3,6 +3,7 @@ package ru.sapegin.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.sapegin.aspect.annotation.Cached;
 import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.dto.RegistrationDTO;
 import ru.sapegin.dto.UserDTO;
@@ -17,6 +18,7 @@ public class ClientUserController {
     private final ClientServiceImpl clientService;
     private final UserServiceImpl userService;
 
+
     @PostMapping("/register")
     public UserDTO register(@RequestBody RegistrationDTO registrationDTO){
         var user = userService.create(registrationDTO.userDTO());
@@ -24,9 +26,17 @@ public class ClientUserController {
         return userService.mapToDTO(user);
     }
 
+    @Cached(cacheByPrimaryKey = true)
     @GetMapping("/client/{id}")
     public ClientFastDTO getClientData(@PathVariable("id") Long id){
         var client = clientService.getClientById(id);
         return clientService.mapToDTO(client);
+    }
+
+    @Cached(cacheByPrimaryKey = true)
+    @GetMapping("/search")
+    public UserDTO getUserByRequestParams(@RequestParam String login){
+        var user = userService.getUserByLogin(login);
+        return userService.mapToDTO(user);
     }
 }

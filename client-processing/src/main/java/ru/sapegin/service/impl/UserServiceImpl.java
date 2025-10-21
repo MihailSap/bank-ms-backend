@@ -55,4 +55,8 @@ public class UserServiceImpl implements UserServiceI {
     public UserDTO mapToDTO(User user) {
         return new UserDTO(user.getLogin(), user.getPassword(), user.getEmail());
     }
+
+    public User getUserByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("User с таким login не найден"));
+    }
 }
