@@ -6,7 +6,7 @@ import ru.sapegin.model.ClientProduct;
 
 public interface ClientProductServiceI {
 
-    ClientProductFullDTO create(ClientProductDTO clientProductDTO);
+    ClientProduct create(ClientProductDTO clientProductDTO);
 
     ClientProductFullDTO mapToFullDTO(ClientProduct clientProduct);
 }

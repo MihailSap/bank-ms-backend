@@ -26,3 +26,28 @@ spring:
 
 server:
   port: 8082
+
+limit:
+  time:
+    method-execution: 100
+    cache-storage: 10000
+
+sapegin:
+  aspect:
+    metric:
+      enabled: true
+      time-limit: 200
+    cached:
+      enabled: true
+      time-limit: 10000
+    income-request:
+      enabled: true
+    outcome-request:
+      enabled: true
+    log-datasource:
+      enabled: true
+
+jwt:
+  secret:
+    access: ${JWT_ACCESS_SECRET}
+    refresh: ${JWT_REFRESH_SECRET}

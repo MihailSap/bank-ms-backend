@@ -1,0 +1,79 @@
+package ru.sapegin.service.impl;
+
+import io.jsonwebtoken.Claims;
+import jakarta.security.auth.message.AuthException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sapegin.dto.AuthRequest;
+import ru.sapegin.dto.AuthResponse;
+import ru.sapegin.enums.TokenType;
+import ru.sapegin.model.User;
+import ru.sapegin.service.JwtAuthServiceI;
+
+@Service
+public class JwtAuthServiceImpl implements JwtAuthServiceI {
+
+    private final RefreshTokenServiceImpl refreshTokenService;
+    private final UserServiceImpl userService;
+    private final JwtTokenServiceImpl jwtTokenService;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenBlacklistServiceImpl tokenBlacklistService;
+
+    @Autowired
+    public JwtAuthServiceImpl(UserServiceImpl userService,
+                              JwtTokenServiceImpl jwtTokenService,
+                              PasswordEncoder passwordEncoder,
+                              RefreshTokenServiceImpl refreshTokenService, TokenBlacklistServiceImpl tokenBlacklistService) {
+        this.userService = userService;
+        this.jwtTokenService = jwtTokenService;
+        this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
+        this.tokenBlacklistService = tokenBlacklistService;
+    }
+
+    @Transactional
+    @Override
+    public AuthResponse login(AuthRequest authRequest) throws AuthException {
+        User user = userService.getUserByLogin(authRequest.login());
+        if (passwordEncoder.matches(authRequest.password(), user.getPassword())) {
+            String accessToken = jwtTokenService.getAccessToken(user);
+            String refreshToken = jwtTokenService.getRefreshToken(user);
+            userService.updateRefreshToken(user, refreshToken);
+            return new AuthResponse(accessToken, refreshToken);
+        } else {
+            throw new AuthException("Неправильный пароль");
+        }
+    }
+
+    @Override
+    public AuthResponse refresh(String refreshToken) throws AuthException {
+        if(tokenBlacklistService.contains(refreshToken)){
+            throw new RuntimeException("Токен находится в чёрном списке");
+        }
+
+        if (jwtTokenService.validateRefreshToken(refreshToken, TokenType.REFRESH)) {
+            Claims claims = jwtTokenService.getClaims(refreshToken, TokenType.REFRESH);
+            String login = claims.getSubject();
+            User user = userService.getUserByLogin(login);
+            var saveRefreshToken = refreshTokenService.getByUser(user).getBody();
+            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
+                String accessToken = jwtTokenService.getAccessToken(user);
+                String newRefreshToken = jwtTokenService.getRefreshToken(user);
+                var existingToken = refreshTokenService.getByUser(user);
+                existingToken.setBody(newRefreshToken);
+                refreshTokenService.save(existingToken);
+                return new AuthResponse(accessToken, newRefreshToken);
+            }
+        }
+        throw new AuthException("Невалидный JWT токен");
+    }
+
+    @Override
+    public void logout(String refreshToken) {
+        var token = refreshTokenService.getByBody(refreshToken);
+        var user = token.getUser();
+        userService.updateRefreshToken(user, null);
+    }
+}

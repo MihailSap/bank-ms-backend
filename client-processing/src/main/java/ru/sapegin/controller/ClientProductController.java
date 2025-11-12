@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.sapegin.dto.ClientProductDTO;
 import ru.sapegin.dto.ClientProductFullDTO;
-import ru.sapegin.kafka.KafkaProducerService;
+import ru.sapegin.model.ClientProduct;
 import ru.sapegin.service.impl.ClientProductServiceImpl;
 
 @RestController
@@ -12,16 +12,11 @@ import ru.sapegin.service.impl.ClientProductServiceImpl;
 @RequiredArgsConstructor
 public class ClientProductController {
 
-    private final KafkaProducerService kafkaProducerService;
     private final ClientProductServiceImpl clientProductService;
-
-    @PostMapping("/create")
-    public void createClientProduct(@RequestBody ClientProductDTO clientProductDTO) {
-        kafkaProducerService.inspectClientProduct(clientProductDTO);
-    }
 
     @PostMapping("/create-credit")
     public ClientProductFullDTO createClientCredit(@RequestBody ClientProductDTO clientProductDTO){
-        return clientProductService.create(clientProductDTO);
+        ClientProduct clientProduct = clientProductService.create(clientProductDTO);
+        return clientProductService.mapToFullDTO(clientProduct);
     }
 }

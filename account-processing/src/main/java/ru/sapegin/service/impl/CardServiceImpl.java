@@ -5,10 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.CardDTO;
+import ru.sapegin.enums.AccountStatusEnum;
 import ru.sapegin.model.Card;
+import ru.sapegin.model.Transaction;
 import ru.sapegin.repository.CardRepository;
 import ru.sapegin.service.CardServiceI;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -21,12 +25,12 @@ public class CardServiceImpl implements CardServiceI {
 
     @Transactional
     @Override
-    public CardDTO create(CardDTO cardDTO) {
+    public Card create(CardDTO cardDTO) {
         var accountId = cardDTO.getAccountId();
         var paymentSystem = cardDTO.getPaymentSystem();
         var account = accountService.getAccountById(accountId);
-        if(account.getStatus().equals("BLOCKED")){
-            throw new RuntimeException("Account status is BLOCKED");
+        if(account.getStatus().equals(AccountStatusEnum.BLOCKED)){
+            throw new RuntimeException("Аккаунт заблокирован, создание карты недоступно");
         }
 
         var card = new Card(
@@ -37,7 +41,8 @@ public class CardServiceImpl implements CardServiceI {
 
         cardRepository.save(card);
         log.info("СОЗДАНА Card: {}", card);
-        return mapToDTO(card);
+        accountService.updateCardExist(accountId);
+        return card;
     }
 
     @Override
@@ -84,5 +89,27 @@ public class CardServiceImpl implements CardServiceI {
                 card.getPaymentSystem(),
                 card.getStatus()
         );
+    }
+
+    @Override
+    public Card getCardById(Long id) {
+        return cardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Card с таким id не найдена"));
+    }
+
+    @Override
+    public int getTransactionsCountByTime(List<Transaction> transactionsByCardId, int sT, int eT){
+        var cnt = 0;
+        if(!transactionsByCardId.isEmpty()){
+            for(var t : transactionsByCardId){
+                var timestamp = t.getTimestamp();
+                var startT = LocalDateTime.now().minusDays(sT);
+                var endT = LocalDateTime.now().plusDays(eT);
+                if(timestamp.isAfter(startT) && timestamp.isBefore(endT)){
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
     }
 }

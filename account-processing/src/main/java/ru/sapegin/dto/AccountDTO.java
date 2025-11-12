@@ -1,7 +1,9 @@
 package ru.sapegin.dto;
 
+import ru.sapegin.enums.AccountStatusEnum;
+
 import java.math.BigDecimal;
 
 public record AccountDTO(Long clientId, Long productId, BigDecimal balance,
-                         BigDecimal interestRate, boolean isRecalc, boolean cardExists, String status) {
+                         BigDecimal interestRate, boolean isRecalc, boolean cardExists, AccountStatusEnum status) {
 }

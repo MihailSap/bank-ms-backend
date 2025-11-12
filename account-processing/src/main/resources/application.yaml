@@ -26,3 +26,9 @@ spring:
 
 server:
   port: 8081
+
+transaction:
+  max-count: 2
+  period:
+    start-days-offset: 10
+    end-days-offset: 10

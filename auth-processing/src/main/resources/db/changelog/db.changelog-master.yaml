@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/v1_create_user.yaml
+  - include:
+      file: db/changelog/changeset/v2_create_token.yaml
+  - include:
+      file: db/changelog/changeset/v3_add_user_role.yaml
+  - include:
+      file: db/changelog/changeset/v4_create_token_blacklist.yaml

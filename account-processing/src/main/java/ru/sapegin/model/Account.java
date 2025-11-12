@@ -2,8 +2,10 @@ package ru.sapegin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sapegin.enums.AccountStatusEnum;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -30,10 +32,11 @@ public class Account {
 
     private boolean cardExist;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AccountStatusEnum status;
 
     public Account(Long clientId, Long productId, BigDecimal balance,
-                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, String status) {
+                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, AccountStatusEnum status) {
         this.clientId = clientId;
         this.productId = productId;
         this.balance = balance;
@@ -41,5 +44,18 @@ public class Account {
         this.isRecalc = isRecalc;
         this.cardExist = cardExist;
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return isRecalc == account.isRecalc && cardExist == account.cardExist && Objects.equals(id, account.id) && Objects.equals(clientId, account.clientId) && Objects.equals(productId, account.productId) && Objects.equals(balance, account.balance) && Objects.equals(interestRate, account.interestRate) && status == account.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, clientId, productId, balance, interestRate, isRecalc, cardExist, status);
     }
 }

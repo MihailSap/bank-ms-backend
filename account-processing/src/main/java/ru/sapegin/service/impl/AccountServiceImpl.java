@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.AccountDTO;
 import ru.sapegin.dto.ClientProductDTO;
+import ru.sapegin.dto.TransactionDTO;
+import ru.sapegin.enums.AccountStatusEnum;
+import ru.sapegin.enums.TransactionTypeEnum;
 import ru.sapegin.model.Account;
 import ru.sapegin.repository.AccountRepository;
 import ru.sapegin.service.AccountServiceI;
@@ -21,19 +24,36 @@ public class AccountServiceImpl implements AccountServiceI {
 
     @Transactional
     @Override
-    public AccountDTO create(ClientProductDTO accountDTO) {
+    public Account create(ClientProductDTO accountDTO) {
         var account = new Account(
                 accountDTO.clientId(),
                 accountDTO.productId(),
                 BigDecimal.ZERO,
-                BigDecimal.valueOf(0.01),
-                "CC".equals(accountDTO.key()) || "NS".equals(accountDTO.key()),
+                BigDecimal.valueOf(accountDTO.interestRate()),
+                "CC".equals(accountDTO.keyType()) || "NS".equals(accountDTO.keyType()),
                 false,
-                "ACTIVE"
+                AccountStatusEnum.ACTIVE
         );
         accountRepository.save(account);
         log.info("СОЗДАН Account: {}", account);
-        return mapToDTO(account);
+        return account;
+    }
+
+    @Transactional
+    @Override
+    public Account updateAccountByTransaction(TransactionDTO transactionDTO){
+        var account = getAccountById(transactionDTO.getAccountId());
+        if(account.getStatus().equals(AccountStatusEnum.ARRESTED)
+                || account.getStatus().equals(AccountStatusEnum.BLOCKED)){
+            throw new RuntimeException("Аккаунт заблокирован");
+        }
+        if(transactionDTO.getType().equals(TransactionTypeEnum.DEBITING)){
+            debitMoney(account, transactionDTO.getAmount());
+        } else if(transactionDTO.getType().equals(TransactionTypeEnum.ACCRUAL)){
+            accrualMoney(account, transactionDTO.getAmount());
+        }
+        //accountRepository.save(account);
+        return account;
     }
 
     @Override
@@ -53,5 +73,34 @@ public class AccountServiceImpl implements AccountServiceI {
     public Account getAccountById(Long accountId) {
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account с таким id не найден"));
+    }
+
+    @Transactional
+    @Override
+    public Account updateCardExist(Long accountId) {
+        var account = getAccountById(accountId);
+        account.setCardExist(true);
+        return accountRepository.save(account);
+    }
+
+    @Transactional
+    @Override
+    public void blockAccount(Account account){
+        account.setStatus(AccountStatusEnum.BLOCKED);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    @Override
+    public void debitMoney(Account account, BigDecimal amount){
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    @Override
+    public void accrualMoney(Account account , BigDecimal amount){
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.save(account);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sapegin.dto.ClientDTO;
 import ru.sapegin.dto.ClientFastDTO;
 import ru.sapegin.model.Client;
-import ru.sapegin.model.User;
 import ru.sapegin.repository.BlacklistRegistryRepository;
 import ru.sapegin.repository.ClientRepository;
 import ru.sapegin.service.ClientServiceI;
@@ -25,7 +24,7 @@ public class ClientServiceImpl implements ClientServiceI {
 
     @Transactional
     @Override
-    public void create(ClientDTO clientDTO, User user) {
+    public Client create(ClientDTO clientDTO, Long userId) {
         if(existsInBlacklist(clientDTO)){
             throw new RuntimeException("Клиент находится в чёрном списке");
         }
@@ -35,9 +34,10 @@ public class ClientServiceImpl implements ClientServiceI {
                 clientDTO.regionNumber(), clientDTO.bankDivisionNumber(),
                 clientRepository.countByRegionAndDivision(prefix) + 1);
 
-        var client = mapFromDTO(clientDTO, clientId, user);
+        var client = mapFromDTO(clientDTO, clientId, userId);
         clientRepository.save(client);
         log.info("СОЗДАН Client: {}", client);
+        return client;
     }
 
     @Override
@@ -68,10 +68,10 @@ public class ClientServiceImpl implements ClientServiceI {
     }
 
     @Override
-    public Client mapFromDTO(ClientDTO clientDTO, String clientId, User user) {
+    public Client mapFromDTO(ClientDTO clientDTO, String clientId, Long userId) {
         return new Client(
                 clientId,
-                user,
+                userId,
                 clientDTO.firstName(),
                 clientDTO.middleName(),
                 clientDTO.lastName(),
