@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v1_create_product_registry.yaml
   - include:
       file: db/changelog/changeset/v2_create_payment_registry.yaml
+  - include:
+      file: db/changelog/changeset/v3_update_product_registry.yaml

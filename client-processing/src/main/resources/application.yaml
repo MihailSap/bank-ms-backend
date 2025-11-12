@@ -2,6 +2,10 @@ spring:
   application:
     name: client-processing
 
+  kafka:
+    consumer:
+      group-id: "default"
+
   config:
     import:
       optional:application-secret.yaml

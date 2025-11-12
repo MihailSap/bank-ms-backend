@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15
+      author: mihail
+      changes:
+        - dropNotNullConstraint:
+            tableName: product
+            columnName: product_id
+            columnDataType: VARCHAR(50)

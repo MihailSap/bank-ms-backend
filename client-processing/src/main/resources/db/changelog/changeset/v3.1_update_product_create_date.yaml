@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14
+      author: mihail
+      changes:
+        - modifyDataType:
+            tableName: product
+            columnName: create_date
+            newDataType: DATE

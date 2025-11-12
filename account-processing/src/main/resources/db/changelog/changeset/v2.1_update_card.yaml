@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16
+      author: mihail
+      changes:
+        - modifyDataType:
+            tableName: card
+            columnName: card_id
+            newDataType: VARCHAR(50)

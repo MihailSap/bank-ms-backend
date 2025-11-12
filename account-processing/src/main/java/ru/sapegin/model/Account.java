@@ -1,9 +1,15 @@
 package ru.sapegin.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "account")
 public class Account {
@@ -22,86 +28,18 @@ public class Account {
 
     private boolean isRecalc;
 
-    private boolean cardExists;
+    private boolean cardExist;
 
     private String status;
 
-    public Account(Long id, Long clientId, Long productId, BigDecimal balance,
-                   BigDecimal interestRate, boolean isRecalc, boolean cardExists, String status) {
-        this.id = id;
+    public Account(Long clientId, Long productId, BigDecimal balance,
+                   BigDecimal interestRate, boolean isRecalc, boolean cardExist, String status) {
         this.clientId = clientId;
         this.productId = productId;
         this.balance = balance;
         this.interestRate = interestRate;
         this.isRecalc = isRecalc;
-        this.cardExists = cardExists;
-        this.status = status;
-    }
-
-    public Account() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(BigDecimal interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public boolean isRecalc() {
-        return isRecalc;
-    }
-
-    public void setRecalc(boolean recalc) {
-        isRecalc = recalc;
-    }
-
-    public boolean isCardExists() {
-        return cardExists;
-    }
-
-    public void setCardExists(boolean cardExists) {
-        this.cardExists = cardExists;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
+        this.cardExist = cardExist;
         this.status = status;
     }
 }

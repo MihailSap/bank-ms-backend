@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v3_create_payment.yaml
   - include:
       file: db/changelog/changeset/v4_create_transaction.yaml
+  - include:
+      file: db/changelog/changeset/v2.1_update_card.yaml
