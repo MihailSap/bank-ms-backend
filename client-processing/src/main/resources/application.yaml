@@ -2,5 +2,23 @@ spring:
   application:
     name: client-processing
 
+  config:
+    import:
+      optional:application-secret.yaml
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: validate
+
+    liquibase:
+      enabled: true
+
 server:
   port: 8082

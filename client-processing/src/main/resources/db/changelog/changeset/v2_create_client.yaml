@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: mihail
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middle_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_of_birth
+                  type: DATE
+              - column:
+                  name: document_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_prefix
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_suffix
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: client
+            baseColumnNames: user_id
+            constraintName: fk_client_user
+            referencedTableName: users
+            referencedColumnNames: id
+        - sql:
+            sql: ALTER TABLE client
+              ADD CONSTRAINT chk_client_doc_type
+              CHECK (document_type IN ('PASSPORT','INT_PASSPORT','BIRTH_CERT'))
